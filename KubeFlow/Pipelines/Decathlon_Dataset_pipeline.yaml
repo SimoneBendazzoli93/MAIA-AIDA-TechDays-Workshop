@@ -1,0 +1,104 @@
+# PIPELINE DEFINITION
+# Name: decathlon-dataset-pipeline
+# Description: Pipeline to download the requested Decathlon dataset.
+# Inputs:
+#    decathlon_task: str
+components:
+  comp-download-decathlon-dataset:
+    executorLabel: exec-download-decathlon-dataset
+    inputDefinitions:
+      parameters:
+        decathlon_task:
+          parameterType: STRING
+deploymentSpec:
+  executors:
+    exec-download-decathlon-dataset:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - download_decathlon_dataset
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'pytorch-ignite'\
+          \ 'SimpleITK' 'nibabel'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ 'kfp==2.14.2' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"\
+          3.9\"' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef download_decathlon_dataset(decathlon_task: str):\n    import\
+          \ os\n    from monai.apps import DecathlonDataset\n    os.environ[\"MONAI_DATA_DIRECTORY\"\
+          ] = \"/mnt/Data\"\n    root_dir = os.environ.get(\"MONAI_DATA_DIRECTORY\"\
+          )\n    DecathlonDataset(root_dir=root_dir, task=decathlon_task, section=\"\
+          training\", download=True, cache_num=1)\n    root_folder = os.path.join(root_dir,\
+          \ decathlon_task)\n    for dirpath, dirnames, filenames in os.walk(root_folder):\n\
+          \        for filename in filenames:\n            if filename.startswith('.'):\n\
+          \                full_path = os.path.join(dirpath, filename)\n         \
+          \       try:\n                    os.remove(full_path)\n               \
+          \     print(f\"Deleted: {full_path}\")\n                except Exception\
+          \ as e:\n                    print(f\"Failed to delete {full_path}: {e}\"\
+          )\n\n"
+        image: maiacloud/monet-pipeline:1.3
+        resources:
+          cpuLimit: 8.0
+          cpuRequest: 1.0
+          memoryLimit: 34.359738368
+          memoryRequest: 8.589934592
+          resourceCpuLimit: 8000m
+          resourceCpuRequest: 1000m
+          resourceMemoryLimit: 32Gi
+          resourceMemoryRequest: 8Gi
+pipelineInfo:
+  description: Pipeline to download the requested Decathlon dataset.
+  name: decathlon-dataset-pipeline
+root:
+  dag:
+    tasks:
+      download-decathlon-dataset:
+        cachingOptions: {}
+        componentRef:
+          name: comp-download-decathlon-dataset
+        inputs:
+          parameters:
+            decathlon_task:
+              componentInputParameter: decathlon_task
+        taskInfo:
+          name: download-decathlon-dataset
+  inputDefinitions:
+    parameters:
+      decathlon_task:
+        parameterType: STRING
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.14.2
+---
+platforms:
+  kubernetes:
+    deploymentSpec:
+      executors:
+        exec-download-decathlon-dataset:
+          genericEphemeralVolume:
+          - accessModes:
+            - ReadWriteOnce
+            mountPath: /dev/shm
+            size: 2Gi
+            storageClassName: local-path
+            volumeName: shm
+          pvcMount:
+          - constant: shared
+            mountPath: /mnt/Data
+            pvcNameParameter:
+              runtimeValue:
+                constant: shared
