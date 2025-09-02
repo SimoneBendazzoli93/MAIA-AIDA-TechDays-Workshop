@@ -1,0 +1,268 @@
+# PIPELINE DEFINITION
+# Name: monet-pipeline-prepare-and-preprocessing
+# Description: Pipeline that runs the MONet Bundle Data Preparation and Preprocessing.
+# Inputs:
+#    config_file_path: str
+components:
+  comp-plan-and-preprocess:
+    executorLabel: exec-plan-and-preprocess
+    inputDefinitions:
+      parameters:
+        config_file_path:
+          parameterType: STRING
+  comp-prepare:
+    executorLabel: exec-prepare
+    inputDefinitions:
+      parameters:
+        config_file_path:
+          parameterType: STRING
+  comp-prepare-bundle:
+    executorLabel: exec-prepare-bundle
+    inputDefinitions:
+      parameters:
+        config_file_path:
+          parameterType: STRING
+deploymentSpec:
+  executors:
+    exec-plan-and-preprocess:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - plan_and_preprocess
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'pytorch-ignite'\
+          \ 'SimpleITK' 'nibabel'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ 'kfp==2.14.2' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"\
+          3.9\"' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef plan_and_preprocess(config_file_path: str):    \n    import time\n\
+          \    import os\n    import subprocess\n    import yaml\n\n    with open(\"\
+          /mnt/Data/\"+config_file_path,\"r\") as f:\n        config_dict = yaml.safe_load(f)\n\
+          \n    config_dict[\"steps\"] = [\"plan_and_preprocess\"]\n\n    with open(\"\
+          /tmp/config_plan_and_preprocess.yaml\",\"w\") as f:\n        yaml.dump(config_dict,f)\n\
+          \n    with open(\"/tmp/config_plan_and_preprocess.yaml\",\"r\") as f:\n\
+          \        config_dict = yaml.safe_load(f)\n    print(config_dict)\n\n   \
+          \ start = time.time()\n    os.environ[\"PYTHONPATH\"]= config_dict[\"bundle_config\"\
+          ][\"bundle_root\"]\n    subprocess.run([\"python3\",\n                 \
+          \  \"/opt/pipeline.py\",\n                    \"--config\",\n          \
+          \          \"/tmp/config_plan_and_preprocess.yaml\"])\n    end = time.time()\n\
+          \    print(f\"Elapsed time: {end - start:.1f} seconds\")\n\n"
+        image: maiacloud/monet-pipeline:1.3
+        resources:
+          cpuLimit: 8.0
+          cpuRequest: 1.0
+          memoryLimit: 34.359738368
+          memoryRequest: 8.589934592
+          resourceCpuLimit: 8000m
+          resourceCpuRequest: 1000m
+          resourceMemoryLimit: 32Gi
+          resourceMemoryRequest: 8Gi
+    exec-prepare:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - prepare
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'pytorch-ignite'\
+          \ 'SimpleITK' 'nibabel'  &&  python3 -m pip install --quiet --no-warn-script-location\
+          \ 'kfp==2.14.2' '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"\
+          3.9\"' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef prepare(config_file_path: str):    \n    import time\n    import\
+          \ os\n    import subprocess\n    import yaml\n\n    with open(\"/mnt/Data/\"\
+          +config_file_path,\"r\") as f:\n        config_dict = yaml.safe_load(f)\n\
+          \n    config_dict[\"steps\"] = [\"prepare\"]\n\n    with open(\"/tmp/config_prepare.yaml\"\
+          ,\"w\") as f:\n        yaml.dump(config_dict,f)\n\n    with open(\"/tmp/config_prepare.yaml\"\
+          ,\"r\") as f:\n        config_dict = yaml.safe_load(f)\n    print(config_dict)\n\
+          \n    start = time.time()\n    os.environ[\"PYTHONPATH\"]= config_dict[\"\
+          bundle_config\"][\"bundle_root\"]\n    subprocess.run([\"python3\",\n  \
+          \                 \"/opt/pipeline.py\",\n                    \"--config\"\
+          ,\n                    \"/tmp/config_prepare.yaml\"])\n    end = time.time()\n\
+          \    print(f\"Elapsed time: {end - start:.1f} seconds\")\n\n"
+        image: maiacloud/monet-pipeline:1.3
+        resources:
+          cpuLimit: 8.0
+          cpuRequest: 1.0
+          memoryLimit: 34.359738368
+          memoryRequest: 8.589934592
+          resourceCpuLimit: 8000m
+          resourceCpuRequest: 1000m
+          resourceMemoryLimit: 32Gi
+          resourceMemoryRequest: 8Gi
+    exec-prepare-bundle:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - prepare_bundle
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'pytorch-ignite'\
+          \ 'SimpleITK' 'nibabel' 'monet-bundle'  &&  python3 -m pip install --quiet\
+          \ --no-warn-script-location 'kfp==2.14.2' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef prepare_bundle(config_file_path: str):    \n    import time\n\
+          \    import os\n    import subprocess\n    import yaml\n    from pathlib\
+          \ import Path\n\n    with open(\"/mnt/Data/\"+config_file_path,\"r\") as\
+          \ f:\n        config_dict = yaml.safe_load(f)\n\n    config_dict[\"steps\"\
+          ] = [\"prepare_bundle\"]\n\n    with open(\"/tmp/config_prepare_bundle.yaml\"\
+          ,\"w\") as f:\n        yaml.dump(config_dict,f)\n\n    with open(\"/tmp/config_prepare_bundle.yaml\"\
+          ,\"r\") as f:\n        config_dict = yaml.safe_load(f)\n    print(config_dict)\n\
+          \    Path(config_dict[\"bundle_config\"][\"bundle_root\"]).parent.mkdir(parents=True,exist_ok=True)\n\
+          \    subprocess.run([\"MONet_fetch_bundle\",\"--bundle_path\", Path(config_dict[\"\
+          bundle_config\"][\"bundle_root\"]).parent])\n    start = time.time()\n \
+          \   os.environ[\"PYTHONPATH\"]= config_dict[\"bundle_config\"][\"bundle_root\"\
+          ]\n    subprocess.run([\"python3\",\n                   \"/opt/pipeline.py\"\
+          ,\n                    \"--config\",\n                    \"/tmp/config_prepare_bundle.yaml\"\
+          ])\n    end = time.time()\n    print(f\"Elapsed time: {end - start:.1f}\
+          \ seconds\")\n\n"
+        image: maiacloud/monet-pipeline:1.3
+        resources:
+          cpuLimit: 8.0
+          cpuRequest: 1.0
+          memoryLimit: 34.359738368
+          memoryRequest: 8.589934592
+          resourceCpuLimit: 8000m
+          resourceCpuRequest: 1000m
+          resourceMemoryLimit: 32Gi
+          resourceMemoryRequest: 8Gi
+pipelineInfo:
+  description: Pipeline that runs the MONet Bundle Data Preparation and Preprocessing.
+  name: monet-pipeline-prepare-and-preprocessing
+root:
+  dag:
+    tasks:
+      plan-and-preprocess:
+        cachingOptions: {}
+        componentRef:
+          name: comp-plan-and-preprocess
+        dependentTasks:
+        - prepare
+        inputs:
+          parameters:
+            config_file_path:
+              componentInputParameter: config_file_path
+        taskInfo:
+          name: plan-and-preprocess
+      prepare:
+        cachingOptions: {}
+        componentRef:
+          name: comp-prepare
+        inputs:
+          parameters:
+            config_file_path:
+              componentInputParameter: config_file_path
+        taskInfo:
+          name: prepare
+      prepare-bundle:
+        cachingOptions: {}
+        componentRef:
+          name: comp-prepare-bundle
+        dependentTasks:
+        - plan-and-preprocess
+        inputs:
+          parameters:
+            config_file_path:
+              componentInputParameter: config_file_path
+        taskInfo:
+          name: prepare-bundle
+  inputDefinitions:
+    parameters:
+      config_file_path:
+        parameterType: STRING
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.14.2
+---
+platforms:
+  kubernetes:
+    deploymentSpec:
+      executors:
+        exec-plan-and-preprocess:
+          genericEphemeralVolume:
+          - accessModes:
+            - ReadWriteOnce
+            mountPath: /dev/shm
+            size: 2Gi
+            storageClassName: local-path
+            volumeName: shm
+          pvcMount:
+          - constant: shared
+            mountPath: /mnt/Data
+            pvcNameParameter:
+              runtimeValue:
+                constant: shared
+        exec-prepare:
+          genericEphemeralVolume:
+          - accessModes:
+            - ReadWriteOnce
+            mountPath: /dev/shm
+            size: 2Gi
+            storageClassName: local-path
+            volumeName: shm
+          pvcMount:
+          - constant: shared
+            mountPath: /mnt/Data
+            pvcNameParameter:
+              runtimeValue:
+                constant: shared
+        exec-prepare-bundle:
+          genericEphemeralVolume:
+          - accessModes:
+            - ReadWriteOnce
+            mountPath: /dev/shm
+            size: 2Gi
+            storageClassName: local-path
+            volumeName: shm
+          pvcMount:
+          - constant: shared
+            mountPath: /mnt/Data
+            pvcNameParameter:
+              runtimeValue:
+                constant: shared
