@@ -144,3 +144,11 @@ The main advantage of using tools like 3D Slicer in the MAIA Workspace or the OH
 <p align="center">
     <img src="./img/Preprocessing.png" alt="Data Preprocessing" style="width:70%;" />
 </p>
+Most deep learning frameworks for medical image processing perform better with NIFTI images, where each case is stored as a single 3D volume along with its corresponding annotation mask, rather than using the native DICOM format. Therefore, it is necessary to export DICOM images and their associated DICOM SEG annotations into NIFTI format within the MAIA Workspace, ensuring the dataset is ready for downstream model training tasks.  
+
+A Kubeflow Pipeline is available in MAIA to handle the DICOM-to-NIFTI conversion [DICOM-to-NIFTI_pipeline.yaml](./KubeFlow/Pipelines/DICOM_to_NIFTI_pipeline.yaml). To run it, specify the DICOM WEB url and the output directory for the NIFTI files:
+```yaml
+studies: <ORTHANC_DICOM_WEB_URL>
+output_folder: /mnt/Data/NIFTI/Task09_Spleen
+```
+After the successful execution of the Pipeline, you will find the NIFTI converted dataset under `output_folder`.
