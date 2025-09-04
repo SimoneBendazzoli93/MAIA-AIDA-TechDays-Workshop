@@ -1,0 +1,134 @@
+# PIPELINE DEFINITION
+# Name: monet-pipeline-convert-ckpt-to-pt
+# Description: Pipeline that runs the Conversion between the Lightning Checkpoint to PyTorch .pt format.
+# Inputs:
+#    config_file_path: str
+components:
+  comp-convert-ckpt-to-pt:
+    executorLabel: exec-convert-ckpt-to-pt
+    inputDefinitions:
+      parameters:
+        config_file_path:
+          parameterType: STRING
+deploymentSpec:
+  executors:
+    exec-convert-ckpt-to-pt:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - convert_ckpt_to_pt
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'pytorch-ignite'\
+          \ 'SimpleITK' 'nibabel' 'monet-bundle'  &&  python3 -m pip install --quiet\
+          \ --no-warn-script-location 'kfp==2.14.2' '--no-deps' 'typing-extensions>=3.7.4,<5;\
+          \ python_version<\"3.9\"' && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef convert_ckpt_to_pt(config_file_path: str):    \n    import os\n\
+          \    import yaml\n    import re\n    import os\n    import torch\n    with\
+          \ open(\"/mnt/Data/\"+config_file_path,\"r\") as f:\n            config_dict\
+          \ = yaml.safe_load(f)\n    ckpt_dir = os.path.join(config_dict[\"bundle_config\"\
+          ][\"bundle_root\"],\"models\",\"fold_{}\".format(config_dict.get(\"fold\"\
+          ,0)))\n    files = os.listdir(ckpt_dir)\n\n    ckpt_files = [f for f in\
+          \ files if f.endswith('.ckpt')]\n\n\n\n    for ckpt_file in ckpt_files:\n\
+          \        match = re.match(r'epoch=(\\d+)-([a-zA-Z0-9_]+)=([0-9\\.]+)\\.ckpt',\
+          \ ckpt_file)\n        if match:\n            print(f\"{ckpt_file} matches:\
+          \ epoch={match.group(1)}, metric={match.group(2)}, value={match.group(3)}\"\
+          )\n            state_dict = torch.load(os.path.join(ckpt_dir, ckpt_file),\
+          \ map_location=torch.device('cpu'))\n            new_state_dict = {}\n \
+          \           new_state_dict[\"network_weights\"] = {}\n            for k,\
+          \ v in state_dict['state_dict'].items():\n                new_key = k.replace('network._orig_mod.',\
+          \ '')\n                new_state_dict[\"network_weights\"][new_key] = v\n\
+          \            new_state_dict[\"optimizer_state\"] = state_dict['optimizer_states'][0]\n\
+          \            new_state_dict[\"scheduler\"] = state_dict['lr_schedulers'][0]\n\
+          \            val_metric = match.group(3)\n            torch.save(new_state_dict,\
+          \ os.path.join(ckpt_dir, f\"checkpoint_key_metric={val_metric}.pt\"))\n\
+          \        else:\n            print(f\"{ckpt_file} does not match the pattern.\"\
+          )\n        match = re.match(r'epoch=(\\d+)\\.ckpt', ckpt_file)\n       \
+          \ if match:\n            print(f\"{ckpt_file} matches: epoch={match.group(1)}\"\
+          )\n            state_dict = torch.load(os.path.join(ckpt_dir, ckpt_file),\
+          \ map_location=torch.device('cpu'))\n            new_state_dict = {}\n \
+          \           new_state_dict[\"network_weights\"] = {}\n            for k,\
+          \ v in state_dict['state_dict'].items():\n                new_key = k.replace('network._orig_mod.',\
+          \ '')\n                new_state_dict[\"network_weights\"][new_key] = v\n\
+          \            new_state_dict[\"optimizer_state\"] = state_dict['optimizer_states'][0]\n\
+          \            new_state_dict[\"scheduler\"] = state_dict['lr_schedulers'][0]\n\
+          \            epoch_num = int(match.group(1)) + 1\n            torch.save(new_state_dict,\
+          \ os.path.join(ckpt_dir, f\"checkpoint_epoch={epoch_num}.pt\"))\n      \
+          \  else:\n            print(f\"{ckpt_file} does not match the pattern.\"\
+          )\n\n"
+        image: maiacloud/monet-pipeline:1.4
+        resources:
+          accelerator:
+            count: '1'
+            resourceCount: '1'
+            resourceType: nvidia.com/gpu
+            type: nvidia.com/gpu
+          cpuLimit: 8.0
+          cpuRequest: 1.0
+          memoryLimit: 34.359738368
+          memoryRequest: 8.589934592
+          resourceCpuLimit: 8000m
+          resourceCpuRequest: 1000m
+          resourceMemoryLimit: 32Gi
+          resourceMemoryRequest: 8Gi
+pipelineInfo:
+  description: Pipeline that runs the Conversion between the Lightning Checkpoint
+    to PyTorch .pt format.
+  name: monet-pipeline-convert-ckpt-to-pt
+root:
+  dag:
+    tasks:
+      convert-ckpt-to-pt:
+        cachingOptions: {}
+        componentRef:
+          name: comp-convert-ckpt-to-pt
+        inputs:
+          parameters:
+            config_file_path:
+              componentInputParameter: config_file_path
+        taskInfo:
+          name: convert-ckpt-to-pt
+  inputDefinitions:
+    parameters:
+      config_file_path:
+        parameterType: STRING
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.14.2
+---
+platforms:
+  kubernetes:
+    deploymentSpec:
+      executors:
+        exec-convert-ckpt-to-pt:
+          genericEphemeralVolume:
+          - accessModes:
+            - ReadWriteOnce
+            mountPath: /dev/shm
+            size: 2Gi
+            storageClassName: local-path
+            volumeName: shm
+          nodeSelector:
+            labels:
+              kubernetes.io/hostname: maia-small-5
+          pvcMount:
+          - constant: shared
+            mountPath: /mnt/Data
+            pvcNameParameter:
+              runtimeValue:
+                constant: shared
