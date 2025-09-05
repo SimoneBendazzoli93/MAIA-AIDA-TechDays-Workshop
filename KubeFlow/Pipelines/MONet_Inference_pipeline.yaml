@@ -23,8 +23,8 @@ deploymentSpec:
         args:
         - export HOLOSCAN_INPUT_PATH=$0 && export HOLOSCAN_OUTPUT_PATH=$1 && python3
           /opt/holoscan/app
-        - '{{$.inputs.parameters[''holo_input'']}}'
-        - '{{$.inputs.parameters[''holo_output'']}}'
+        - /var/holoscan/{{$.inputs.parameters['holo_input']}}
+        - /var/holoscan/{{$.inputs.parameters['holo_output']}}
         command:
         - bash
         - -c
@@ -61,17 +61,11 @@ root:
         inputs:
           parameters:
             holo_input:
-              runtimeValue:
-                constant: /var/holoscan/{{$.inputs.parameters['pipelinechannel--input_folder_path']}}
+              componentInputParameter: input_folder_path
             holo_output:
-              runtimeValue:
-                constant: /var/holoscan/{{$.inputs.parameters['pipelinechannel--output_folder_path']}}
+              componentInputParameter: output_folder_path
             image:
               componentInputParameter: image
-            pipelinechannel--input_folder_path:
-              componentInputParameter: input_folder_path
-            pipelinechannel--output_folder_path:
-              componentInputParameter: output_folder_path
         taskInfo:
           name: spleen-segmentation
   inputDefinitions:
