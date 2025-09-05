@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Markdown Presentation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Reveal.js CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/sky.css">
+
+  <!-- Highlight.js for code syntax -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/styles/monokai.css">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <!-- Slides will be injected here from Markdown -->
+      <section data-markdown>
+        <textarea data-template>
+# MAIA-AIDA-TechDays-Workshop
+Repository containing presentation slides and supporting materials for MAIA Tutorial, AIDA Technical Days, 17 September.
+
+---
+
+## Table of Contents
+- [MAIA-AIDA-TechDays-Workshop](#maia-aida-techdays-workshop)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction to MAIA](#introduction-to-maia)
+    - [Why MAIA?](#why-maia)
+    - [Learn More](#learn-more)
+    - [MAIA in 5 minutes](#maia-in-5-minutes)
+      - [MAIA Projects](#maia-projects)
+    - [User Registration](#user-registration)
+    - [MAIA Dashboard Overview](#maia-dashboard-overview)
+      - [MAIA Project Page](#maia-project-page)
+    - [Connect VSCode to your running MAIA Workspace](#connect-vscode-to-your-running-maia-workspace)
+  - [Part 1: End-to-End Model Development and Deployment Workflow](#part-1-end-to-end-model-development-and-deployment-workflow)
+    - [Overview](#overview)
+    - [Prerequisites](#prerequisites)
+    - [1.1 DICOM Transfer to Orthanc](#11-dicom-transfer-to-orthanc)
+    - [1.1.2 DICOM Manual Annotation \[Optional\]](#112-dicom-manual-annotation-optional)
+    - [1.2 DICOM to NIFTI Conversion](#12-dicom-to-nifti-conversion)
+    - [1.3 Data Preparation and Preprocessing for Image Segmentation with nnUNet](#13-data-preparation-and-preprocessing-for-image-segmentation-with-nnunet)
+  - [1.4 Model Training and Validation with nnUNet (Locally)](#14-model-training-and-validation-with-nnunet-locally)
+    - [Features of the MAIA Workspace](#features-of-the-maia-workspace)
+    - [Training with the MONet Bundle](#training-with-the-monet-bundle)
+      - [MLFlow Integration](#mlflow-integration)
+      - [Validation](#validation)
+      - [Visualization with DTale](#visualization-with-dtale)
+    - [1.5 Model Training and Validation with nnUNet \[HPC\]](#15-model-training-and-validation-with-nnunet-hpc)
+      - [Running Jobs on HPC](#running-jobs-on-hpc)
+      - [Requirements](#requirements)
+      - [Data and Bundle Transfer](#data-and-bundle-transfer)
+      - [Executing Jobs from MAIA-HPC](#executing-jobs-from-maia-hpc)
+      - [Multi-GPU Training](#multi-gpu-training)
+      - [Training Speedup](#training-speedup)
+      - [Interactive Jupyter Sessions on HPC](#interactive-jupyter-sessions-on-hpc)
+      - [Retrieving the Trained Model](#retrieving-the-trained-model)
+      - [Converting the Checkpoint](#converting-the-checkpoint)
+      - [Running Validation](#running-validation)
+      - [Visualization with DTALe](#visualization-with-dtale-1)
+
+---
+## Introduction to MAIA
+
+### Why MAIA?
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Cover_Aurora_Snow-Night.png" alt="MAIA Cover" style="width:80%;" />
+</p>
+Artificial Intelligence in healthcare is advancing rapidly, with the potential to transform medical imaging, diagnostics, and patient care.  
+Yet, one of the biggest challenges remains: the gap between **AI research** and its **real-world clinical application**.
+
+**MAIA** was created to **bridge this gap**.  
+It is an open-source platform designed to bring together **AI researchers and radiologists in the same collaborative space**. By doing so, MAIA promotes direct interaction between those developing algorithms and the professionals who apply them in clinical practice.
+
+This approach enables:
+- **Direct integration of AI into healthcare workflows**  
+- **Faster translation of ideas into prototypes** and then into clinical testing  
+- **Iterative improvement of AI models**, guided by real feedback from clinicians  
+- **Cross-disciplinary collaboration**, ensuring innovations are grounded in clinical reality  
+
+In short, MAIA is more than just a technical workspace, it is a **collaborative environment** where ideas can grow from **concept to deployment**. By promoting open collaboration, MAIA empowers the medical AI community to accelerate research, validate models in clinical contexts, and bring truly impactful innovations closer to patient care.
+
+---
+
+### Learn More
+
+[![GitHub](https://img.shields.io/badge/GitHub-MAIA-181717?style=flat&logo=github&logoColor=white)](https://github.com/kthcloud/maia)  
+[![arXiv](https://img.shields.io/badge/arXiv-2507.19489-B31B1B?style=flat&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2507.19489)  
+[![Website](https://img.shields.io/badge/Website-MAIA-4AB197?style=flat&logo=appveyor&logoColor=white)](https://maia.app.cloud.cbh.kth.se/)
+
+---
+### MAIA in 5 minutes
+
+MAIA is a collaborative platform designed to manage Medical AI research efficiently and at scale. It brings together state-of-the-art, standards-based tools to cover every stage of the AI lifecycle in the medical domain, from data management and annotation to model training, deployment, and evaluation. Multiple projects can be independently hosted within MAIA, and each user can participate in one or more projects. Built as a federation of clusters, MAIA allows physically independent computing infrastructures to be unified under one platform, abstracting away the complexity so researchers can focus on collaboration and innovation without worrying about the underlying systems.
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/MAIA_Clusters.png" alt="MAIA Clusters Overview" style="width:50%;" />
+</p>
+
+---
+
+#### MAIA Projects  
+
+Each **MAIA Project** is provisioned with a dedicated *MAIA Namespace*, which serves as a container for all the applications required to develop, deploy, and curate medical images along with their corresponding AI models.  
+
+- **Medical Images**: Managed through *Orthanc*, which acts as the project’s DICOM server and entry point for storing and accessing imaging data.  
+- **Model Development & Scientific Computing**: Provided via the *MAIA Workspace* inside the namespace, giving users isolated or shared environments.  
+
+Entrypoints to the workspace include:  
+- Remote Desktop  
+- Jupyter Interface  
+- SSH Connection  
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/kthcloud/maia/master/dashboard/image/README/MAIA_Workspace.png" width="90%" alt='MAIA'>
+</p>
+
+---
+
+### User Registration
+To register in the MAIA Project, created for the MAIA Workshop, and getting access to the resources, please follow these steps:
+
+1. Visit the [MAIA Project Registration Page](https://maia.app.cloud.cbh.kth.se/maia/register/).
+2. Fill out the registration form with the required information. Under "Existing Project", select "**aida-workshop**".
+3. Submit the form and check your email for a confirmation message.
+4. Follow the instructions in the email to complete your registration.
+
+Once registered, you will have access to all workshop materials and resources.
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Registration_Form.png" alt="Registration Form" style="width:50%;" />
+</p>
+
+---
+
+### MAIA Dashboard Overview
+After logging in, you will be directed to the MAIA Dashboard. Here, you can have an overview of the MAIA Cluster resources, including information about the status of each cluster and node.
+
+On the side, there is a navigation bar that allows you to access the different project pages you are assigned to.
+By clicking on a project name, you can switch between different projects and access their specific resources and tools.
+
+--- 
+
+#### MAIA Project Page
+The MAIA Project page is structured in four main sections:
+
+1. **MAIA Apps**: A collection of applications and tools available for use within the project.
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/MAIA-Apps.png" alt="MAIA Apps" style="width:50%;" />
+</p>
+
+2. **Remote Desktops**: This section provides a table listing each project user, along with a direct link to their Remote Desktop interface for accessing the MAIA Workspace. It also includes the corresponding SSH command for connecting to the MAIA Workspace.
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Desktops.png" alt="Remote Desktops" style="width:80%;" />
+</p>
+
+3. **MONAI Label Models**: A list of available models, deployed for integration in inference pipelines (MAIA Segmentation Portal, PACS Integration through XNAT or Orthanc), and Active Learning
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Models.png" alt="MONAI Label Models" style="width:60%;" />
+</p>
+
+4. **Orthanc DICOM Web**: A list of available Orthanc instances for the project, including a reference to the DICOMWeb and the DICOM C-GET and C-STORE endpoints.
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Orthanc.png" alt="Orthanc DICOM Web" style="width:70%;" />
+</p>
+
+---
+
+### Connect VSCode to your running MAIA Workspace
+
+You can connect VSCode (or any other IDE through SSH), by following these steps:
+
+1. Upload a new or an existing SSH key following the instructions on the [MAIA Welcome](https://github.com/kthcloud/MAIA/blob/master/docker/MAIA-Workspace/Welcome.ipynb) page in your MAIA Workspace (`/home/maia-user/Welcome.ipynb`), either from the Jupyter interface or the Remote Desktop
+2. Retrieve the SSH command to execute either from the same [MAIA Welcome](https://github.com/kthcloud/MAIA/blob/master/docker/MAIA-Workspace/Welcome.ipynb) page or from the MAIA Dashboard, under the **Remote Desktops** table.
+
+        </textarea>
+      </section>
+    </div>
+  </div>
+
+  <!-- Reveal.js -->
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/markdown/markdown.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/plugin/highlight/highlight.js"></script>
+
+  <script>
+    Reveal.initialize({
+      hash: true,
+      plugins: [ RevealMarkdown, RevealHighlight ]
+    });
+  </script>
+<style>
+/* Make all slides take full width and height */
+.reveal .slides section {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;   /* remove default max-width */
+    max-height: none !important;  /* remove default max-height */
+    padding: 1em;                 /* optional padding */
+    overflow-y: auto;             /* enable vertical scroll */
+    overflow-x: auto;             /* enable horizontal scroll if needed */
+    box-sizing: border-box;
+    font-size: 0.4em; /* adjust as needed: 0.7em, 0.75em, etc. */
+    line-height: 1.2em; /* optional: tighter line spacing */
+}
+
+/* Optional: make images scale properly */
+.reveal img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+    margin: auto;
+}
+</style>
+</body>
+</html>
