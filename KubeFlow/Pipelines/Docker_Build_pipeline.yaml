@@ -1,0 +1,252 @@
+# PIPELINE DEFINITION
+# Name: docker-build-pipeline
+# Description: Pipeline that builds Docker image using Kaniko.
+# Inputs:
+#    context: str
+#    destination: str
+#    model_file: str
+#    segmentation_task_file: str
+components:
+  comp-build-docker-image:
+    executorLabel: exec-build-docker-image
+    inputDefinitions:
+      parameters:
+        context:
+          parameterType: STRING
+        destination:
+          parameterType: STRING
+  comp-build-docker-image-nifti:
+    executorLabel: exec-build-docker-image-nifti
+    inputDefinitions:
+      parameters:
+        context:
+          parameterType: STRING
+        destination:
+          parameterType: STRING
+  comp-create-docker-context:
+    executorLabel: exec-create-docker-context
+    inputDefinitions:
+      parameters:
+        context:
+          parameterType: STRING
+        model_file:
+          parameterType: STRING
+        segmentation_task_file:
+          parameterType: STRING
+deploymentSpec:
+  executors:
+    exec-build-docker-image:
+      container:
+        command:
+        - /kaniko/executor
+        - --dockerfile=Dockerfile
+        - --context=/data/{{$.inputs.parameters['context']}}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0
+        - --destination={{$.inputs.parameters['destination']}}
+        - --build-arg
+        - UID=1000
+        - --build-arg
+        - GID=1000
+        - --build-arg
+        - UNAME=holoscan
+        - --build-arg
+        - GPU_TYPE=dgpu
+        image: gcr.io/kaniko-project/executor:latest
+        resources:
+          cpuLimit: 2.0
+          cpuRequest: 1.0
+          memoryLimit: 25.769803776
+          memoryRequest: 25.769803776
+          resourceCpuLimit: 2000m
+          resourceCpuRequest: 1000m
+          resourceMemoryLimit: 24Gi
+          resourceMemoryRequest: 24Gi
+    exec-build-docker-image-nifti:
+      container:
+        command:
+        - /kaniko/executor
+        - --dockerfile=Dockerfile
+        - --context=/data/{{$.inputs.parameters['context']}}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0-nifti
+        - --destination={{$.inputs.parameters['destination']}}
+        - --build-arg
+        - UID=1000
+        - --build-arg
+        - GID=1000
+        - --build-arg
+        - UNAME=holoscan
+        - --build-arg
+        - GPU_TYPE=dgpu
+        image: gcr.io/kaniko-project/executor:latest
+        resources:
+          cpuLimit: 2.0
+          cpuRequest: 1.0
+          memoryLimit: 25.769803776
+          memoryRequest: 25.769803776
+          resourceCpuLimit: 2000m
+          resourceCpuRequest: 1000m
+          resourceMemoryLimit: 24Gi
+          resourceMemoryRequest: 24Gi
+    exec-create-docker-context:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - create_docker_context
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.14.2'\
+          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"' && \"\
+          $0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef create_docker_context(context: str, segmentation_task_file: str,\
+          \ model_file: str):  \n    import subprocess\n\n    repo_url = \"https://github.com/SimoneBendazzoli93/MONet-Bundle.git\"\
+          \n    clone_dir = \"/data/\"+context\n\n    subprocess.run([\"rm\", \"-rf\"\
+          , clone_dir], check=True)\n    subprocess.run([\"git\", \"clone\", repo_url,\
+          \ clone_dir], check=True)\n    subprocess.run([\"mkdir\", \"-p\", f\"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0/models/model/\"\
+          ], check=True)\n    subprocess.run([\"cp\", \"/data/\"+segmentation_task_file,\
+          \ f\"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0/Segmentation_Task.yaml\"\
+          ], check=True)\n    subprocess.run([\"cp\", \"/data/\"+model_file, f\"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0/models/model/model.ts\"\
+          ], check=True)\n    subprocess.run([\"mkdir\", \"-p\", f\"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0-nifti/models/model/\"\
+          ], check=True)\n    subprocess.run([\"cp\", \"/data/\"+segmentation_task_file,\
+          \ f\"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0-nifti/Segmentation_Task.yaml\"\
+          ], check=True)\n    subprocess.run([\"cp\", \"/data/\"+model_file, f\"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0-nifti/models/model/model.ts\"\
+          ], check=True)\n\n"
+        image: maiacloud/monet-pipeline:1.3
+        resources:
+          cpuLimit: 2.0
+          cpuRequest: 1.0
+          memoryLimit: 8.589934592
+          memoryRequest: 8.589934592
+          resourceCpuLimit: 2000m
+          resourceCpuRequest: 1000m
+          resourceMemoryLimit: 8Gi
+          resourceMemoryRequest: 8Gi
+pipelineInfo:
+  description: Pipeline that builds Docker image using Kaniko.
+  name: docker-build-pipeline
+root:
+  dag:
+    tasks:
+      build-docker-image:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-build-docker-image
+        dependentTasks:
+        - create-docker-context
+        inputs:
+          parameters:
+            context:
+              componentInputParameter: context
+            destination:
+              componentInputParameter: destination
+        taskInfo:
+          name: build-docker-image
+      build-docker-image-nifti:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-build-docker-image-nifti
+        dependentTasks:
+        - create-docker-context
+        inputs:
+          parameters:
+            context:
+              componentInputParameter: context
+            destination:
+              runtimeValue:
+                constant: '{{$.inputs.parameters[''pipelinechannel--destination'']}}'
+            pipelinechannel--destination:
+              componentInputParameter: destination
+        taskInfo:
+          name: build-docker-image-nifti
+      create-docker-context:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-create-docker-context
+        inputs:
+          parameters:
+            context:
+              componentInputParameter: context
+            model_file:
+              componentInputParameter: model_file
+            segmentation_task_file:
+              componentInputParameter: segmentation_task_file
+        taskInfo:
+          name: create-docker-context
+  inputDefinitions:
+    parameters:
+      context:
+        parameterType: STRING
+      destination:
+        parameterType: STRING
+      model_file:
+        parameterType: STRING
+      segmentation_task_file:
+        parameterType: STRING
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.14.2
+---
+platforms:
+  kubernetes:
+    deploymentSpec:
+      executors:
+        exec-build-docker-image:
+          imagePullSecret:
+          - secretName: maiacloud-dockerhub
+            secretNameParameter:
+              runtimeValue:
+                constant: maiacloud-dockerhub
+          pvcMount:
+          - constant: shared
+            mountPath: /data
+            pvcNameParameter:
+              runtimeValue:
+                constant: shared
+          secretAsVolume:
+          - mountPath: /kaniko/.docker
+            optional: false
+            secretName: maiacloud-dockerhub
+            secretNameParameter:
+              runtimeValue:
+                constant: maiacloud-dockerhub
+        exec-build-docker-image-nifti:
+          imagePullSecret:
+          - secretName: maiacloud-dockerhub
+            secretNameParameter:
+              runtimeValue:
+                constant: maiacloud-dockerhub
+          pvcMount:
+          - constant: shared
+            mountPath: /data
+            pvcNameParameter:
+              runtimeValue:
+                constant: shared
+          secretAsVolume:
+          - mountPath: /kaniko/.docker
+            optional: false
+            secretName: maiacloud-dockerhub
+            secretNameParameter:
+              runtimeValue:
+                constant: maiacloud-dockerhub
+        exec-create-docker-context:
+          pvcMount:
+          - constant: shared
+            mountPath: /data
+            pvcNameParameter:
+              runtimeValue:
+                constant: shared

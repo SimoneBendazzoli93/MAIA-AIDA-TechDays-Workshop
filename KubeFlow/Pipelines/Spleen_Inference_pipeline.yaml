@@ -1,0 +1,103 @@
+# PIPELINE DEFINITION
+# Name: monet-inference-pipeline
+# Description: Pipeline that runs the MONet Inference.
+# Inputs:
+#    image: str
+#    input_folder_path: str
+#    output_folder_path: str
+components:
+  comp-spleen-segmentation:
+    executorLabel: exec-spleen-segmentation
+    inputDefinitions:
+      parameters:
+        holo_input:
+          parameterType: STRING
+        holo_output:
+          parameterType: STRING
+        image:
+          parameterType: STRING
+deploymentSpec:
+  executors:
+    exec-spleen-segmentation:
+      container:
+        args:
+        - export HOLOSCAN_INPUT_PATH=$0 && export HOLOSCAN_OUTPUT_PATH=$1 && python3
+          /opt/holoscan/app
+        - '{{$.inputs.parameters[''holo_input'']}}'
+        - '{{$.inputs.parameters[''holo_output'']}}'
+        command:
+        - bash
+        - -c
+        image: '{{$.inputs.parameters[''image'']}}'
+        resources:
+          accelerator:
+            count: '1'
+            resourceCount: '1'
+            resourceType: nvidia.com/gpu
+            type: nvidia.com/gpu
+          cpuLimit: 8.0
+          cpuRequest: 1.0
+          memoryLimit: 17.179869184
+          memoryRequest: 8.589934592
+          resourceCpuLimit: 8000m
+          resourceCpuRequest: 1000m
+          resourceMemoryLimit: 16Gi
+          resourceMemoryRequest: 8Gi
+pipelineInfo:
+  description: Pipeline that runs the MONet Inference.
+  name: monet-inference-pipeline
+root:
+  dag:
+    tasks:
+      spleen-segmentation:
+        cachingOptions: {}
+        componentRef:
+          name: comp-spleen-segmentation
+        inputs:
+          parameters:
+            holo_input:
+              runtimeValue:
+                constant: /var/holoscan/{{$.inputs.parameters['pipelinechannel--input_folder_path']}}
+            holo_output:
+              runtimeValue:
+                constant: /var/holoscan/{{$.inputs.parameters['pipelinechannel--output_folder_path']}}
+            image:
+              componentInputParameter: image
+            pipelinechannel--input_folder_path:
+              componentInputParameter: input_folder_path
+            pipelinechannel--output_folder_path:
+              componentInputParameter: output_folder_path
+        taskInfo:
+          name: spleen-segmentation
+  inputDefinitions:
+    parameters:
+      image:
+        parameterType: STRING
+      input_folder_path:
+        parameterType: STRING
+      output_folder_path:
+        parameterType: STRING
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.14.2
+---
+platforms:
+  kubernetes:
+    deploymentSpec:
+      executors:
+        exec-spleen-segmentation:
+          genericEphemeralVolume:
+          - accessModes:
+            - ReadWriteOnce
+            mountPath: /dev/shm
+            size: 2Gi
+            storageClassName: local-path
+            volumeName: shm
+          nodeSelector:
+            labels:
+              kubernetes.io/hostname: maia-small-5
+          pvcMount:
+          - constant: shared
+            mountPath: /var/holoscan
+            pvcNameParameter:
+              runtimeValue:
+                constant: shared
