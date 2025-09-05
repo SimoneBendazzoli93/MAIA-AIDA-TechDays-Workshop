@@ -28,6 +28,11 @@ deploymentSpec:
         command:
         - bash
         - -c
+        env:
+        - name: SEGMENTATION_TASK_CONFIG_FILE
+          value: /etc/holoscan/Segmentation_Task.yaml
+        - name: SEGMENTATION_TASK_NAME
+          value: Spleen
         image: '{{$.inputs.parameters[''image'']}}'
         resources:
           accelerator:
