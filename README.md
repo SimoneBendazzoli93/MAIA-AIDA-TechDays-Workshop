@@ -168,8 +168,8 @@ By the end of this sequence, you will have built and deployed a model that is fu
 ### Prerequisites
 You will need a DICOM dataset to upload into MAIA.  
 
-- To download a sample dataset, visit the [Decathlon Challenge](http://medicaldecathlon.com/) website or follow the instructions in [Kubeflow - Download Dataset from Decathlon Challenge](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/Kubeflow.ipynb#Download-Spleen-Decathlon-Dataset).  
-- Since the dataset is provided in NIfTI format, you will need to convert it to DICOM. Follow the steps in [Kubeflow - Convert NIfTI to DICOM](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/Kubeflow.ipynb#Convert-NIFTI-to-DICOM).  
+- To download a sample dataset, visit the [Decathlon Challenge](http://medicaldecathlon.com/) website or follow the instructions in [Kubeflow - Download Dataset from Decathlon Challenge](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/Kubeflow.ipynb#Download-Spleen-Decathlon-Dataset).  
+- Since the dataset is provided in NIfTI format, you will need to convert it to DICOM. Follow the steps in [Kubeflow - Convert NIfTI to DICOM](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/Kubeflow.ipynb#Convert-NIFTI-to-DICOM).  
 
 For convenience, an example DICOM dataset with 5 abdominal CT scans (converted from the Task09-Spleen Decathlon dataset) is available here:  
 [MinIO - DICOM Spleen Dataset](https://aida-workshop.maia-small.cloud.cbh.kth.se/minio-console/api/v1/download-shared-object/aHR0cDovL21pbmlvLmFpZGEtd29ya3Nob3Auc3ZjLmNsdXN0ZXIubG9jYWwvc3BsZWVuL1NwbGVlbl9ESUNPTS56aXA_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1WT0Q3SVFIQkZZVVhSSUFGWlI1OCUyRjIwMjUwOTAxJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDkwMVQxMzI1NDZaJlgtQW16LUV4cGlyZXM9NDMxOTkmWC1BbXotU2VjdXJpdHktVG9rZW49ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmhZMk5sYzNOTFpYa2lPaUpXVDBRM1NWRklRa1paVlZoU1NVRkdXbEkxT0NJc0ltRmpjaUk2SWpFaUxDSmhkRjlvWVhOb0lqb2lTbXg2WWtSWlJXTTJXbXRUYnpaU1JEQm9OVjg1WnlJc0ltRjFaQ0k2SW0xaGFXRWlMQ0poZFhSb1gzUnBiV1VpT2pFM05UWTNNek13Tmpjc0ltRjZjQ0k2SW0xaGFXRWlMQ0psYldGcGJDSTZJbk5wYldKbGJrQnJkR2d1YzJVaUxDSmxiV0ZwYkY5MlpYSnBabWxsWkNJNmRISjFaU3dpWlhod0lqb3hOelUyTnpZNU1EWTJMQ0ptWVcxcGJIbGZibUZ0WlNJNklrSmxibVJoZW5wdmJHa2lMQ0puYVhabGJsOXVZVzFsSWpvaVUybHRiMjVsSWl3aVozSnZkWEJ6SWpvaVRVRkpRVHBoYVdSaExYZHZjbXR6YUc5d0lpd2lhV0YwSWpveE56VTJOek16TURZNExDSnBjM01pT2lKb2RIUndjem92TDJsaGJTNWpiRzkxWkM1alltZ3VhM1JvTG5ObEwzSmxZV3h0Y3k5amJHOTFaQ0lzSW1wMGFTSTZJamRpTkdVNVkyRm1MVE5oWlRndE5EUmlZeTFoWlRjNExUaGxNV0ZqTVdaaE1qWXlNeUlzSW01aGJXVWlPaUpUYVcxdmJtVWdRbVZ1WkdGNmVtOXNhU0lzSW5CeVpXWmxjbkpsWkY5MWMyVnlibUZ0WlNJNkluTnBiV0psYmtCcmRHZ3VjMlVpTENKemFXUWlPaUkzWlRKa1lqQmpZeTAzWkdZd0xUUXpaVE10T1RJeFlTMHpPREF4TTJZeE9UbGxZVEVpTENKemRXSWlPaUkzWTJFNE1EQXdPQzFpTldWbUxUUmhZak10WWpJMVppMWlaV1E0WkRSbVpUUmpabU1pTENKMGVYQWlPaUpKUkNKOS5OMW40US04eEsycmxxeXVSOERvWGF0ZGdqQ2R4QkVfLU9JLWxYbEM1ZFlNSWszSU1PRHRjMTBKUU5reTB6eHhHMnNhN1pweXZGUDVveTUxZVM3SlQwUSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmdmVyc2lvbklkPW51bGwmWC1BbXotU2lnbmF0dXJlPThjMDM5MzE3MmNiYTY5ODg1YTFmYzY1MmY3MDMyZmNhNjZmOTAyYmY1Yzc2MDg5YmI0NTQ0N2JiZTFlYzhkODA)
@@ -216,7 +216,7 @@ The main advantage of using tools like 3D Slicer in the MAIA Workspace or the OH
 </p>
 Most deep learning frameworks for medical image processing perform better with NIFTI images, where each case is stored as a single 3D volume along with its corresponding annotation mask, rather than using the native DICOM format. Therefore, it is necessary to export DICOM images and their associated DICOM SEG annotations into NIFTI format within the MAIA Workspace, ensuring the dataset is ready for downstream model training tasks.  
 
-A Kubeflow Pipeline is available in MAIA to handle the DICOM-to-NIFTI conversion [DICOM-to-NIFTI_pipeline.yaml](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Pipelines/DICOM_to_NIFTI_pipeline.yaml). To run it, specify the DICOM WEB url and the output directory for the NIFTI files:
+A Kubeflow Pipeline is available in MAIA to handle the DICOM-to-NIFTI conversion [DICOM-to-NIFTI_pipeline.yaml](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/KubeFlow/Pipelines/DICOM_to_NIFTI_pipeline.yaml). To run it, specify the DICOM WEB url and the output directory for the NIFTI files:
 ```yaml
 studies: <ORTHANC_DICOM_WEB_URL>
 output_folder: /mnt/Data/NIFTI/Task09_Spleen
@@ -281,7 +281,7 @@ bundle_config:
 EOF
 ```
 
-And then we can run the KubeFlow pipeline for this step, [MONet-Pipeline-Plan-and-Preprocess](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Pipelines/MONet_pipeline_Plan_and_Preprocess.yaml), specifying where to locate the configuration file:
+And then we can run the KubeFlow pipeline for this step, [MONet-Pipeline-Plan-and-Preprocess](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/KubeFlow/Pipelines/MONet_pipeline_Plan_and_Preprocess.yaml), specifying where to locate the configuration file:
 ```yaml
 config_file_path: configs/Task09_Spleen_config.yaml
 ```
@@ -315,7 +315,7 @@ The MONet Bundle includes:
 We will reuse the same configuration file created during the data preparation step, which contains all necessary parameters for training.
 
 To launch the training step, run the **KubeFlow pipeline**:  
-[MONet-Pipeline-Train](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Pipelines/MONet_pipeline_Train.yaml)  
+[MONet-Pipeline-Train](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/KubeFlow/Pipelines/MONet_pipeline_Train.yaml)  
 
 Specify the configuration file location:  
 
@@ -347,7 +347,7 @@ The MONet Bundle supports:
 - Logging validation metrics (e.g., **Dice Score**, **Average Surface Distance**, **Hausdorff Distance 95**) into MLFlow  
 
 To run validation, use the following KubeFlow pipeline:  
-[MONet-Pipeline-Validation](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Pipelines/MONet_pipeline_Validation.yaml)  
+[MONet-Pipeline-Validation](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/KubeFlow/Pipelines/MONet_pipeline_Validation.yaml)  
 
 Specify the configuration file location:  
 
@@ -380,7 +380,7 @@ This allows you to scale up the training process by leveraging multiple GPUs and
 For example, you can move from training on a single GPU to training on **8 GPUs in parallel** (as available in the PDC cluster).
 
 Detailed setup instructions can be found in:  
-👉 [MAIA-HPC/README.md](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/MAIA-HPC/README.md)
+👉 [MAIA-HPC/README.md](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/MAIA-HPC/README.md)
 
 ---
 
@@ -395,7 +395,7 @@ Once configured, you are ready to:
 For running this tutorial on the HPC cluster, you need:
 - A **Singularity container** with:
   - PyTorch `2.4.0` (with CUDA support)  
-  - Required packages listed in [MAIA-HPC/requirements.txt](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/MAIA-HPC/requirements.txt)  
+  - Required packages listed in [MAIA-HPC/requirements.txt](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/MAIA-HPC/requirements.txt)  
 
 ---
 
@@ -405,7 +405,7 @@ This can be done via:
 - `sftp` command  
 - Remote Desktop integration  
 - Or the provided Python script:  
-  [SFTP transfer](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Scripts/SFTP_Pipeline.py)  
+  [SFTP transfer](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/KubeFlow/Scripts/SFTP_Pipeline.py)  
 
 ---
 
@@ -464,7 +464,7 @@ Once training is complete, you can retrieve the trained model back to **MAIA** f
 For transferring the model, use one of the following:
 - `sftp`  
 - Remote Desktop integration  
-- Python script: [SFTP transfer](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Scripts/SFTP_Pipeline.py)  
+- Python script: [SFTP transfer](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/KubeFlow/Scripts/SFTP_Pipeline.py)  
 
 ---
 
@@ -472,7 +472,7 @@ For transferring the model, use one of the following:
 Before validation, convert the **PyTorch Lightning checkpoint** into a standard **PyTorch model** compatible with the MONet Bundle.  
 
 We provide a KubeFlow pipeline for this step:  
-👉 [MONet-Pipeline-Convert-CKPT-to-PT](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Pipelines/MONet_pipeline_Convert_CKPT_to_PT.yaml)  
+👉 [MONet-Pipeline-Convert-CKPT-to-PT](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/KubeFlow/Pipelines/MONet_pipeline_Convert_CKPT_to_PT.yaml)  
 
 Specify the configuration file location:
 
@@ -591,7 +591,7 @@ And its sub-fields:
 --- 
 
 Then, to package the model, we provide a KubeFlow pipeline:  
-[MONet-Pipeline-Convert_PT_to_TS](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Pipelines/MONet_pipeline_Convert_PT_to_TS.yaml)
+[MONet-Pipeline-Convert_PT_to_TS](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/KubeFlow/Pipelines/MONet_pipeline_Convert_PT_to_TS.yaml)
 
 With this pipeline, we will convert the trained **PyTorch** model along with the complete **MONAI Bundle** into a **TorchScript** format.  
 
