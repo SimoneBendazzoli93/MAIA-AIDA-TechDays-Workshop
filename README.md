@@ -38,7 +38,7 @@ Repository containing presentation slides and supporting materials for MAIA Tuto
       - [Converting the Checkpoint](#converting-the-checkpoint)
       - [Running Validation](#running-validation)
       - [Visualization with DTALe](#visualization-with-dtale-1)
-    - [1.6 Package the Trained Model](#16-package-the-trained-model)
+    - [1.6 Model Packaging](#16-model-packaging)
     - [Packaging nnUNet with MONAI Bundle](#packaging-nnunet-with-monai-bundle)
       - [Step 1: Create a Metadata File](#step-1-create-a-metadata-file)
 
@@ -502,7 +502,7 @@ DTALe provides interactive plots and metrics exploration for evaluating model pe
 
 ---
 
-### 1.6 Package the Trained Model
+### 1.6 Model Packaging
 
 Once a model has been trained and validated, the next step is to make it shareable for external use—either with collaborators or within pipelines that require automatic predictions for specific tasks, such as organ or tumor segmentation.
 
