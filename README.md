@@ -589,6 +589,7 @@ And its sub-fields:
   - `outputs`: Describes the output data format, including type, number of channels, spatial shape, data type, value range, and channel definitions.
 
 --- 
+
 Then, to package the model, we provide a KubeFlow pipeline:  
 [MONet-Pipeline-Convert_PT_to_TS](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Pipelines/MONet_pipeline_Convert_PT_to_TS.yaml)
 
