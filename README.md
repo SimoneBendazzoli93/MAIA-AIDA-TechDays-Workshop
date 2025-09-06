@@ -20,9 +20,9 @@ Repository containing presentation slides and supporting materials for MAIA Tuto
     - [1.1.2 DICOM Manual Annotation \[Optional\]](#112-dicom-manual-annotation-optional)
     - [1.2 DICOM to NIFTI Conversion](#12-dicom-to-nifti-conversion)
     - [1.3 Data Preparation and Preprocessing for Image Segmentation with nnUNet](#13-data-preparation-and-preprocessing-for-image-segmentation-with-nnunet)
-  - [1.4 Model Training and Validation with nnUNet (Locally)](#14-model-training-and-validation-with-nnunet-locally)
-    - [Features of the MAIA Workspace](#features-of-the-maia-workspace)
-    - [Training with the MONet Bundle](#training-with-the-monet-bundle)
+    - [1.4 Model Training and Validation with nnUNet (Locally)](#14-model-training-and-validation-with-nnunet-locally)
+      - [Features of the MAIA Workspace](#features-of-the-maia-workspace)
+      - [Training with the MONet Bundle](#training-with-the-monet-bundle)
       - [MLFlow Integration](#mlflow-integration)
       - [Validation](#validation)
       - [Visualization with DTale](#visualization-with-dtale)
@@ -38,13 +38,16 @@ Repository containing presentation slides and supporting materials for MAIA Tuto
       - [Converting the Checkpoint](#converting-the-checkpoint)
       - [Running Validation](#running-validation)
       - [Visualization with DTALe](#visualization-with-dtale-1)
+    - [1.6 Package the Trained Model](#16-package-the-trained-model)
+    - [Packaging nnUNet with MONAI Bundle](#packaging-nnunet-with-monai-bundle)
+      - [Step 1: Create a Metadata File](#step-1-create-a-metadata-file)
 
-
+---
 ## Introduction to MAIA
 
 ### Why MAIA?
 <p align="center">
-    <img src="./img/Cover_Aurora_Snow-Night.png" alt="MAIA Cover" style="width:80%;" />
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Cover_Aurora_Snow-Night.png" alt="MAIA Cover" style="width:80%;" />
 </p>
 Artificial Intelligence in healthcare is advancing rapidly, with the potential to transform medical imaging, diagnostics, and patient care.  
 Yet, one of the biggest challenges remains: the gap between **AI research** and its **real-world clinical application**.
@@ -60,18 +63,24 @@ This approach enables:
 
 In short, MAIA is more than just a technical workspace, it is a **collaborative environment** where ideas can grow from **concept to deployment**. By promoting open collaboration, MAIA empowers the medical AI community to accelerate research, validate models in clinical contexts, and bring truly impactful innovations closer to patient care.
 
+---
+
 ### Learn More
 
 [![GitHub](https://img.shields.io/badge/GitHub-MAIA-181717?style=flat&logo=github&logoColor=white)](https://github.com/kthcloud/maia)  
 [![arXiv](https://img.shields.io/badge/arXiv-2507.19489-B31B1B?style=flat&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2507.19489)  
 [![Website](https://img.shields.io/badge/Website-MAIA-4AB197?style=flat&logo=appveyor&logoColor=white)](https://maia.app.cloud.cbh.kth.se/)
+
+---
 ### MAIA in 5 minutes
 
 MAIA is a collaborative platform designed to manage Medical AI research efficiently and at scale. It brings together state-of-the-art, standards-based tools to cover every stage of the AI lifecycle in the medical domain, from data management and annotation to model training, deployment, and evaluation. Multiple projects can be independently hosted within MAIA, and each user can participate in one or more projects. Built as a federation of clusters, MAIA allows physically independent computing infrastructures to be unified under one platform, abstracting away the complexity so researchers can focus on collaboration and innovation without worrying about the underlying systems.
 
 <p align="center">
-    <img src="./img/MAIA_Clusters.png" alt="MAIA Clusters Overview" style="width:50%;" />
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/MAIA_Clusters.png" alt="MAIA Clusters Overview" style="width:50%;" />
 </p>
+
+---
 
 #### MAIA Projects  
 
@@ -89,6 +98,8 @@ Entrypoints to the workspace include:
   <img src="https://raw.githubusercontent.com/kthcloud/maia/master/dashboard/image/README/MAIA_Workspace.png" width="90%" alt='MAIA'>
 </p>
 
+---
+
 ### User Registration
 To register in the MAIA Project, created for the MAIA Workshop, and getting access to the resources, please follow these steps:
 
@@ -99,8 +110,10 @@ To register in the MAIA Project, created for the MAIA Workshop, and getting acce
 
 Once registered, you will have access to all workshop materials and resources.
 <p align="center">
-    <img src="./img/Registration_Form.png" alt="Registration Form" style="width:50%;" />
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Registration_Form.png" alt="Registration Form" style="width:50%;" />
 </p>
+
+---
 
 ### MAIA Dashboard Overview
 After logging in, you will be directed to the MAIA Dashboard. Here, you can have an overview of the MAIA Cluster resources, including information about the status of each cluster and node.
@@ -108,29 +121,32 @@ After logging in, you will be directed to the MAIA Dashboard. Here, you can have
 On the side, there is a navigation bar that allows you to access the different project pages you are assigned to.
 By clicking on a project name, you can switch between different projects and access their specific resources and tools.
 
+--- 
+
 #### MAIA Project Page
 The MAIA Project page is structured in four main sections:
 
 1. **MAIA Apps**: A collection of applications and tools available for use within the project.
 <p align="center">
-    <img src="./img/MAIA-Apps.png" alt="MAIA Apps" style="width:50%;" />
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/MAIA-Apps.png" alt="MAIA Apps" style="width:50%;" />
 </p>
 
 2. **Remote Desktops**: This section provides a table listing each project user, along with a direct link to their Remote Desktop interface for accessing the MAIA Workspace. It also includes the corresponding SSH command for connecting to the MAIA Workspace.
 <p align="center">
-    <img src="./img/Desktops.png" alt="Remote Desktops" style="width:80%;" />
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Desktops.png" alt="Remote Desktops" style="width:80%;" />
 </p>
 
 3. **MONAI Label Models**: A list of available models, deployed for integration in inference pipelines (MAIA Segmentation Portal, PACS Integration through XNAT or Orthanc), and Active Learning
 <p align="center">
-    <img src="./img/Models.png" alt="MONAI Label Models" style="width:60%;" />
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Models.png" alt="MONAI Label Models" style="width:60%;" />
 </p>
 
 4. **Orthanc DICOM Web**: A list of available Orthanc instances for the project, including a reference to the DICOMWeb and the DICOM C-GET and C-STORE endpoints.
 <p align="center">
-    <img src="./img/Orthanc.png" alt="Orthanc DICOM Web" style="width:70%;" />
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Orthanc.png" alt="Orthanc DICOM Web" style="width:70%;" />
 </p>
 
+---
 
 ### Connect VSCode to your running MAIA Workspace
 
@@ -139,25 +155,30 @@ You can connect VSCode (or any other IDE through SSH), by following these steps:
 1. Upload a new or an existing SSH key following the instructions on the [MAIA Welcome](https://github.com/kthcloud/MAIA/blob/master/docker/MAIA-Workspace/Welcome.ipynb) page in your MAIA Workspace (`/home/maia-user/Welcome.ipynb`), either from the Jupyter interface or the Remote Desktop
 2. Retrieve the SSH command to execute either from the same [MAIA Welcome](https://github.com/kthcloud/MAIA/blob/master/docker/MAIA-Workspace/Welcome.ipynb) page or from the MAIA Dashboard, under the **Remote Desktops** table.
 
+---
+
 ## Part 1: End-to-End Model Development and Deployment Workflow
 ### Overview
 This section outlines a complete, day-by-day workflow for developing, training, and deploying a medical imaging AI model.  
 The process begins with DICOM data transfer and manual annotation, continues through dataset conversion, preprocessing, and model training, and concludes with packaging, deployment, and inference on both NIfTI and DICOM inputs.  
 By the end of this sequence, you will have built and deployed a model that is fully integrated into a clinical-style pipeline.
 
+---
 
 ### Prerequisites
 You will need a DICOM dataset to upload into MAIA.  
 
-- To download a sample dataset, visit the [Decathlon Challenge](http://medicaldecathlon.com/) website or follow the instructions in [Kubeflow - Download Dataset from Decathlon Challenge](./Kubeflow.ipynb#Download-Spleen-Decathlon-Dataset).  
-- Since the dataset is provided in NIfTI format, you will need to convert it to DICOM. Follow the steps in [Kubeflow - Convert NIfTI to DICOM](./Kubeflow.ipynb#Convert-NIFTI-to-DICOM).  
+- To download a sample dataset, visit the [Decathlon Challenge](http://medicaldecathlon.com/) website or follow the instructions in [Kubeflow - Download Dataset from Decathlon Challenge](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/Kubeflow.ipynb#Download-Spleen-Decathlon-Dataset).  
+- Since the dataset is provided in NIfTI format, you will need to convert it to DICOM. Follow the steps in [Kubeflow - Convert NIfTI to DICOM](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/Kubeflow.ipynb#Convert-NIFTI-to-DICOM).  
 
 For convenience, an example DICOM dataset with 5 abdominal CT scans (converted from the Task09-Spleen Decathlon dataset) is available here:  
 [MinIO - DICOM Spleen Dataset](https://aida-workshop.maia-small.cloud.cbh.kth.se/minio-console/api/v1/download-shared-object/aHR0cDovL21pbmlvLmFpZGEtd29ya3Nob3Auc3ZjLmNsdXN0ZXIubG9jYWwvc3BsZWVuL1NwbGVlbl9ESUNPTS56aXA_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1WT0Q3SVFIQkZZVVhSSUFGWlI1OCUyRjIwMjUwOTAxJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDkwMVQxMzI1NDZaJlgtQW16LUV4cGlyZXM9NDMxOTkmWC1BbXotU2VjdXJpdHktVG9rZW49ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmhZMk5sYzNOTFpYa2lPaUpXVDBRM1NWRklRa1paVlZoU1NVRkdXbEkxT0NJc0ltRmpjaUk2SWpFaUxDSmhkRjlvWVhOb0lqb2lTbXg2WWtSWlJXTTJXbXRUYnpaU1JEQm9OVjg1WnlJc0ltRjFaQ0k2SW0xaGFXRWlMQ0poZFhSb1gzUnBiV1VpT2pFM05UWTNNek13Tmpjc0ltRjZjQ0k2SW0xaGFXRWlMQ0psYldGcGJDSTZJbk5wYldKbGJrQnJkR2d1YzJVaUxDSmxiV0ZwYkY5MlpYSnBabWxsWkNJNmRISjFaU3dpWlhod0lqb3hOelUyTnpZNU1EWTJMQ0ptWVcxcGJIbGZibUZ0WlNJNklrSmxibVJoZW5wdmJHa2lMQ0puYVhabGJsOXVZVzFsSWpvaVUybHRiMjVsSWl3aVozSnZkWEJ6SWpvaVRVRkpRVHBoYVdSaExYZHZjbXR6YUc5d0lpd2lhV0YwSWpveE56VTJOek16TURZNExDSnBjM01pT2lKb2RIUndjem92TDJsaGJTNWpiRzkxWkM1alltZ3VhM1JvTG5ObEwzSmxZV3h0Y3k5amJHOTFaQ0lzSW1wMGFTSTZJamRpTkdVNVkyRm1MVE5oWlRndE5EUmlZeTFoWlRjNExUaGxNV0ZqTVdaaE1qWXlNeUlzSW01aGJXVWlPaUpUYVcxdmJtVWdRbVZ1WkdGNmVtOXNhU0lzSW5CeVpXWmxjbkpsWkY5MWMyVnlibUZ0WlNJNkluTnBiV0psYmtCcmRHZ3VjMlVpTENKemFXUWlPaUkzWlRKa1lqQmpZeTAzWkdZd0xUUXpaVE10T1RJeFlTMHpPREF4TTJZeE9UbGxZVEVpTENKemRXSWlPaUkzWTJFNE1EQXdPQzFpTldWbUxUUmhZak10WWpJMVppMWlaV1E0WkRSbVpUUmpabU1pTENKMGVYQWlPaUpKUkNKOS5OMW40US04eEsycmxxeXVSOERvWGF0ZGdqQ2R4QkVfLU9JLWxYbEM1ZFlNSWszSU1PRHRjMTBKUU5reTB6eHhHMnNhN1pweXZGUDVveTUxZVM3SlQwUSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmdmVyc2lvbklkPW51bGwmWC1BbXotU2lnbmF0dXJlPThjMDM5MzE3MmNiYTY5ODg1YTFmYzY1MmY3MDMyZmNhNjZmOTAyYmY1Yzc2MDg5YmI0NTQ0N2JiZTFlYzhkODA)
 
+---
+
 ### 1.1 DICOM Transfer to Orthanc  
 <p align="center">
-    <img src="./img/Data_Preparation.png" alt="Data Preparation" style="width:70%;" />
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Data_Preparation.png" alt="Data Preparation" style="width:70%;" />
 </p>
 
 The first step in the AI lifecycle is transferring the DICOM dataset to a MAIA project, making it accessible for subsequent processing and model training. In MAIA, *Orthanc* serves as the entry point for sharing DICOM files within a project.  
@@ -175,6 +196,8 @@ As a third option, files can be uploaded directly via drag-and-drop using the Or
 
 Once uploaded, the DICOM files can be accessed, inspected, and visualized through the Orthanc instance along with its integrated OHIF viewer.
 
+---
+
 ### 1.1.2 DICOM Manual Annotation [Optional]  
 
 For supervised tasks, both the medical images and their corresponding annotated masks are required for the model to learn the desired task. Existing segmentation masks can be uploaded as DICOM SEG files using the same procedure as for the images through Orthanc. Alternatively, masks can be manually annotated using any of the tools available in MAIA:  
@@ -184,19 +207,23 @@ For supervised tasks, both the medical images and their corresponding annotated 
 
 The main advantage of using tools like 3D Slicer in the MAIA Workspace or the OHIF interface is that both the workspace and Orthanc are within the same internal network. This allows communication with Orthanc via its internal IP, e.g., `aida-workshop-orthanc-svc-orthanc:4242`, ensuring that the data never leave the platform and remain fully secure.
 
+---
+
 ### 1.2 DICOM to NIFTI Conversion
 
 <p align="center">
-    <img src="./img/Preprocessing.png" alt="Data Preprocessing" style="width:70%;" />
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Preprocessing.png" alt="Data Preprocessing" style="width:70%;" />
 </p>
 Most deep learning frameworks for medical image processing perform better with NIFTI images, where each case is stored as a single 3D volume along with its corresponding annotation mask, rather than using the native DICOM format. Therefore, it is necessary to export DICOM images and their associated DICOM SEG annotations into NIFTI format within the MAIA Workspace, ensuring the dataset is ready for downstream model training tasks.  
 
-A Kubeflow Pipeline is available in MAIA to handle the DICOM-to-NIFTI conversion [DICOM-to-NIFTI_pipeline.yaml](./KubeFlow/Pipelines/DICOM_to_NIFTI_pipeline.yaml). To run it, specify the DICOM WEB url and the output directory for the NIFTI files:
+A Kubeflow Pipeline is available in MAIA to handle the DICOM-to-NIFTI conversion [DICOM-to-NIFTI_pipeline.yaml](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Pipelines/DICOM_to_NIFTI_pipeline.yaml). To run it, specify the DICOM WEB url and the output directory for the NIFTI files:
 ```yaml
 studies: <ORTHANC_DICOM_WEB_URL>
 output_folder: /mnt/Data/NIFTI/Task09_Spleen
 ```
 After the successful execution of the Pipeline, you will find the NIFTI converted dataset under `output_folder`.
+
+---
 
 ### 1.3 Data Preparation and Preprocessing for Image Segmentation with nnUNet  
 
@@ -254,13 +281,14 @@ bundle_config:
 EOF
 ```
 
-And then we can run the KubeFlow pipeline for this step, [MONet-Pipeline-Plan-and-Preprocess](./KubeFlow/Pipelines/MONet_pipeline_Plan_and_Preprocess.yaml), specifying where to locate the configuration file:
+And then we can run the KubeFlow pipeline for this step, [MONet-Pipeline-Plan-and-Preprocess](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Pipelines/MONet_pipeline_Plan_and_Preprocess.yaml), specifying where to locate the configuration file:
 ```yaml
 config_file_path: configs/Task09_Spleen_config.yaml
 ```
 
+---
 
-## 1.4 Model Training and Validation with nnUNet (Locally)
+### 1.4 Model Training and Validation with nnUNet (Locally)
 
 After completing data preparation and preprocessing, the dataset is ready for model training.  
 The MAIA Workspace provides a complete Python environment with **Conda support**, so you can install any required packages for your experiments.  
@@ -269,14 +297,14 @@ You can train models using any framework, but this tutorial will focus on **nnUN
 
 ---
 
-### Features of the MAIA Workspace
+#### Features of the MAIA Workspace
 - **Full Python environment** with Conda  
 - **SSH access** to run training scripts from your local machine (e.g., using VSCode or another IDE)  
 - **GPU support** for faster training times  
 
 ---
 
-### Training with the MONet Bundle
+#### Training with the MONet Bundle
 As with data preparation and preprocessing, we will use the **MONet Bundle** to streamline the training and validation process.  
 
 The MONet Bundle includes:
@@ -287,7 +315,7 @@ The MONet Bundle includes:
 We will reuse the same configuration file created during the data preparation step, which contains all necessary parameters for training.
 
 To launch the training step, run the **KubeFlow pipeline**:  
-[MONet-Pipeline-Train](./KubeFlow/Pipelines/MONet_pipeline_Train.yaml)  
+[MONet-Pipeline-Train](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Pipelines/MONet_pipeline_Train.yaml)  
 
 Specify the configuration file location:  
 
@@ -319,7 +347,7 @@ The MONet Bundle supports:
 - Logging validation metrics (e.g., **Dice Score**, **Average Surface Distance**, **Hausdorff Distance 95**) into MLFlow  
 
 To run validation, use the following KubeFlow pipeline:  
-[MONet-Pipeline-Validation](./KubeFlow/Pipelines/MONet_pipeline_Validation.yaml)  
+[MONet-Pipeline-Validation](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Pipelines/MONet_pipeline_Validation.yaml)  
 
 Specify the configuration file location:  
 
@@ -339,10 +367,12 @@ DTale provides:
 
 This makes it easy to **analyze, report, and compare** model outcomes for further research and refinement.
 
+---
+
 ### 1.5 Model Training and Validation with nnUNet [HPC]
 
 <p align="center">
-    <img src="./img/HPC.png" alt="Data Preprocessing" style="width:70%;" />
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/HPC.png" alt="Data Preprocessing" style="width:70%;" />
 </p>
 
 One of the biggest features when using **MAIA** is its capability to integrate with external HPC clusters through the **MAIA-HPC interface**.  
@@ -350,7 +380,7 @@ This allows you to scale up the training process by leveraging multiple GPUs and
 For example, you can move from training on a single GPU to training on **8 GPUs in parallel** (as available in the PDC cluster).
 
 Detailed setup instructions can be found in:  
-👉 [MAIA-HPC/README.md](./MAIA-HPC/README.md)
+👉 [MAIA-HPC/README.md](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/MAIA-HPC/README.md)
 
 ---
 
@@ -365,7 +395,7 @@ Once configured, you are ready to:
 For running this tutorial on the HPC cluster, you need:
 - A **Singularity container** with:
   - PyTorch `2.4.0` (with CUDA support)  
-  - Required packages listed in [MAIA-HPC/requirements.txt](./MAIA-HPC/requirements.txt)  
+  - Required packages listed in [MAIA-HPC/requirements.txt](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/MAIA-HPC/requirements.txt)  
 
 ---
 
@@ -375,7 +405,7 @@ This can be done via:
 - `sftp` command  
 - Remote Desktop integration  
 - Or the provided Python script:  
-  [SFTP transfer](./KubeFlow/Scripts/SFTP_Pipeline.py)  
+  [SFTP transfer](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Scripts/SFTP_Pipeline.py)  
 
 ---
 
@@ -434,7 +464,7 @@ Once training is complete, you can retrieve the trained model back to **MAIA** f
 For transferring the model, use one of the following:
 - `sftp`  
 - Remote Desktop integration  
-- Python script: [SFTP transfer](./KubeFlow/Scripts/SFTP_Pipeline.py)  
+- Python script: [SFTP transfer](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Scripts/SFTP_Pipeline.py)  
 
 ---
 
@@ -442,7 +472,7 @@ For transferring the model, use one of the following:
 Before validation, convert the **PyTorch Lightning checkpoint** into a standard **PyTorch model** compatible with the MONet Bundle.  
 
 We provide a KubeFlow pipeline for this step:  
-👉 [MONet-Pipeline-Convert-CKPT-to-PT](./KubeFlow/Pipelines/MONet_pipeline_Convert_CKPT_to_PT.yaml)  
+👉 [MONet-Pipeline-Convert-CKPT-to-PT](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Pipelines/MONet_pipeline_Convert_CKPT_to_PT.yaml)  
 
 Specify the configuration file location:
 
@@ -469,3 +499,101 @@ Then:
 #### Visualization with DTALe
 Finally, visualize the results with **DTALe**, as described in the local training section.  
 DTALe provides interactive plots and metrics exploration for evaluating model performance.
+
+---
+
+### 1.6 Package the Trained Model
+
+Once a model has been trained and validated, the next step is to make it shareable for external use—either with collaborators or within pipelines that require automatic predictions for specific tasks, such as organ or tumor segmentation.
+
+This is achieved through **model packaging**, which means bundling the model together with all the necessary metadata, configuration files, and usage instructions. The goal is to provide a standardized, standalone package that can be easily integrated into different systems with minimal effort. Proper packaging ensures that the model can be deployed in clinical workflows quickly and efficiently, allowing users to obtain results within seconds with minimal intervention.
+
+### Packaging nnUNet with MONAI Bundle
+
+In this tutorial, we will package the trained **nnUNet** model using the **MONAI Bundle** concept.  
+The MONAI Bundle is a framework designed to simplify the packaging and deployment of medical imaging models.  
+It ensures compliance with industry standards while making models easier to share, reuse, and integrate into different workflows.  
+For more details, see the [MONAI Bundle documentation](https://docs.monai.io/en/stable/bundle_intro.html).
+
+---
+
+#### Step 1: Create a Metadata File
+
+The first step is to create a metadata file (`.json`) that describes the model, its intended use, and other relevant information.  
+This file serves as a standardized descriptor, making the model easier to understand and deploy.
+
+Below is an example of a metadata file for a **spleen segmentation** model trained with **nnUNet**:
+
+```json
+{
+    "schema": "https://github.com/Project-MONAI/MONAI-extra-test-data/releases/download/0.8.1/meta_schema_20220324.json",
+    "version": "0.1.0",
+    "changelog": {
+        "0.1.0": "Initial release"
+    },
+    "monai_version": "1.4.0",
+    "pytorch_version": "2.3.0",
+    "numpy_version": "1.21.2",
+    "required_packages_version": {"nnunetv2": "2.6.0"},
+    "task": "Decathlon spleen segmentation with nnUNet",
+    "description": "A pre-trained  nnUNet model for volumetric (3D) segmentation of the spleen from CT image",
+    "authors": "Simone Bendazzoli",
+    "copyright": "Copyright (c) MONAI Consortium",
+    "data_source": "Task09_Spleen.tar from http://medicaldecathlon.com/",
+    "data_type": "nifti",
+    "image_classes": "single channel data, intensity scaled to [0, 1]",
+    "label_classes": "single channel data, 1 is spleen, 0 is everything else",
+    "pred_classes": "2 channels OneHot data, channel 1 is spleen, channel 0 is background",
+    "eval_metrics": {
+        "mean_dice": 0.97
+    },
+    "intended_use": "This is an example, not to be used for diagnostic purposes",
+    "references": [
+        "Isensee, F., Jaeger, P. F., Kohl, S. A., Petersen, J., & Maier-Hein, K. H. (2021). nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation. Nature methods, 18(2), 203-211."
+    ],
+    "network_data_format":{
+        "inputs": {
+            "image": {
+                "type": "image",
+                "format": "hounsfield",
+                "modality": "CT",
+                "num_channels": 1,
+                "spatial_shape": ["*", "*", "*"],
+                "dtype": "float32",
+                "value_range": [-1024, 1024],
+                "is_patch_data": false,
+                "channel_def": {"0": "image"}
+            }
+        },
+        "outputs":{
+            "pred": {
+                "type": "image",
+                "format": "segmentation",
+                "num_channels": 1,
+                "spatial_shape": ["*", "*", "*"],
+                "dtype": "float32",
+                "value_range": [0,1],
+                "is_patch_data": false,
+                "channel_def": {"0": "background", "1": "spleen"}
+            }
+        }
+    }
+}
+```
+The important fields to edit are:
+- `task`: A brief description of the task the model performs.
+- `description`: A detailed description of the model and its capabilities.
+- `network_data_format`: Defines the input and output formats, including data types, shapes, and channel definitions.
+And its sub-fields:
+  - `inputs`: Describes the input data format, including type, modality, number of channels, spatial shape, data type, value range, and channel definitions.
+  - `outputs`: Describes the output data format, including type, number of channels, spatial shape, data type, value range, and channel definitions.
+
+--- 
+Then, to package the model, we provide a KubeFlow pipeline:  
+[MONet-Pipeline-Convert_PT_to_TS](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Pipelines/MONet_pipeline_Convert_PT_to_TS.yaml)
+
+With this pipeline, we will convert the trained **PyTorch** model along with the complete **MONAI Bundle** into a **TorchScript** format.  
+
+TorchScript is optimized for deployment and allows models to run independently of Python, making them suitable for integration into different systems.  
+
+One key advantage of this process is that it produces a **single, standalone file** containing the model, which can be easily shared and reused across various environments.
