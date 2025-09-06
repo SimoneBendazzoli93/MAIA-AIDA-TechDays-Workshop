@@ -174,6 +174,137 @@ You can connect VSCode (or any other IDE through SSH), by following these steps:
 1. Upload a new or an existing SSH key following the instructions on the [MAIA Welcome](https://github.com/kthcloud/MAIA/blob/master/docker/MAIA-Workspace/Welcome.ipynb) page in your MAIA Workspace (`/home/maia-user/Welcome.ipynb`), either from the Jupyter interface or the Remote Desktop
 2. Retrieve the SSH command to execute either from the same [MAIA Welcome](https://github.com/kthcloud/MAIA/blob/master/docker/MAIA-Workspace/Welcome.ipynb) page or from the MAIA Dashboard, under the **Remote Desktops** table.
 
+---
+
+## Part 1: End-to-End Model Development and Deployment Workflow
+### Overview
+This section outlines a complete, day-by-day workflow for developing, training, and deploying a medical imaging AI model.  
+The process begins with DICOM data transfer and manual annotation, continues through dataset conversion, preprocessing, and model training, and concludes with packaging, deployment, and inference on both NIfTI and DICOM inputs.  
+By the end of this sequence, you will have built and deployed a model that is fully integrated into a clinical-style pipeline.
+
+---
+
+### Prerequisites
+You will need a DICOM dataset to upload into MAIA.  
+
+- To download a sample dataset, visit the [Decathlon Challenge](http://medicaldecathlon.com/) website or follow the instructions in [Kubeflow - Download Dataset from Decathlon Challenge](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/Kubeflow.ipynb#Download-Spleen-Decathlon-Dataset).  
+- Since the dataset is provided in NIfTI format, you will need to convert it to DICOM. Follow the steps in [Kubeflow - Convert NIfTI to DICOM](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/Kubeflow.ipynb#Convert-NIFTI-to-DICOM).  
+
+For convenience, an example DICOM dataset with 5 abdominal CT scans (converted from the Task09-Spleen Decathlon dataset) is available here:  
+[MinIO - DICOM Spleen Dataset](https://aida-workshop.maia-small.cloud.cbh.kth.se/minio-console/api/v1/download-shared-object/aHR0cDovL21pbmlvLmFpZGEtd29ya3Nob3Auc3ZjLmNsdXN0ZXIubG9jYWwvc3BsZWVuL1NwbGVlbl9ESUNPTS56aXA_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1WT0Q3SVFIQkZZVVhSSUFGWlI1OCUyRjIwMjUwOTAxJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDkwMVQxMzI1NDZaJlgtQW16LUV4cGlyZXM9NDMxOTkmWC1BbXotU2VjdXJpdHktVG9rZW49ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmhZMk5sYzNOTFpYa2lPaUpXVDBRM1NWRklRa1paVlZoU1NVRkdXbEkxT0NJc0ltRmpjaUk2SWpFaUxDSmhkRjlvWVhOb0lqb2lTbXg2WWtSWlJXTTJXbXRUYnpaU1JEQm9OVjg1WnlJc0ltRjFaQ0k2SW0xaGFXRWlMQ0poZFhSb1gzUnBiV1VpT2pFM05UWTNNek13Tmpjc0ltRjZjQ0k2SW0xaGFXRWlMQ0psYldGcGJDSTZJbk5wYldKbGJrQnJkR2d1YzJVaUxDSmxiV0ZwYkY5MlpYSnBabWxsWkNJNmRISjFaU3dpWlhod0lqb3hOelUyTnpZNU1EWTJMQ0ptWVcxcGJIbGZibUZ0WlNJNklrSmxibVJoZW5wdmJHa2lMQ0puYVhabGJsOXVZVzFsSWpvaVUybHRiMjVsSWl3aVozSnZkWEJ6SWpvaVRVRkpRVHBoYVdSaExYZHZjbXR6YUc5d0lpd2lhV0YwSWpveE56VTJOek16TURZNExDSnBjM01pT2lKb2RIUndjem92TDJsaGJTNWpiRzkxWkM1alltZ3VhM1JvTG5ObEwzSmxZV3h0Y3k5amJHOTFaQ0lzSW1wMGFTSTZJamRpTkdVNVkyRm1MVE5oWlRndE5EUmlZeTFoWlRjNExUaGxNV0ZqTVdaaE1qWXlNeUlzSW01aGJXVWlPaUpUYVcxdmJtVWdRbVZ1WkdGNmVtOXNhU0lzSW5CeVpXWmxjbkpsWkY5MWMyVnlibUZ0WlNJNkluTnBiV0psYmtCcmRHZ3VjMlVpTENKemFXUWlPaUkzWlRKa1lqQmpZeTAzWkdZd0xUUXpaVE10T1RJeFlTMHpPREF4TTJZeE9UbGxZVEVpTENKemRXSWlPaUkzWTJFNE1EQXdPQzFpTldWbUxUUmhZak10WWpJMVppMWlaV1E0WkRSbVpUUmpabU1pTENKMGVYQWlPaUpKUkNKOS5OMW40US04eEsycmxxeXVSOERvWGF0ZGdqQ2R4QkVfLU9JLWxYbEM1ZFlNSWszSU1PRHRjMTBKUU5reTB6eHhHMnNhN1pweXZGUDVveTUxZVM3SlQwUSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmdmVyc2lvbklkPW51bGwmWC1BbXotU2lnbmF0dXJlPThjMDM5MzE3MmNiYTY5ODg1YTFmYzY1MmY3MDMyZmNhNjZmOTAyYmY1Yzc2MDg5YmI0NTQ0N2JiZTFlYzhkODA)
+
+---
+
+### 1.1 DICOM Transfer to Orthanc  
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Data_Preparation.png" alt="Data Preparation" style="width:70%;" />
+</p>
+
+The first step in the AI lifecycle is transferring the DICOM dataset to a MAIA project, making it accessible for subsequent processing and model training. In MAIA, *Orthanc* serves as the entry point for sharing DICOM files within a project.  
+
+Orthanc supports three methods for transferring DICOM files:  
+- **DICOMWeb**  
+- **DICOM C-STORE**  
+- **Orthanc Web Interface**  
+
+For DICOMWeb and C-STORE, you can find the relevant links (for DICOMWeb) and commands (for C-STORE) in the MAIA Dashboard under the **Orthanc DICOM Web** table.  
+
+When using C-STORE, ensure your calling AE title follows the pattern specified in the Orthanc link, e.g., `aida-workshop.maia.se/orthanc-<your-ae-title>`. Alternatively, the AE Title can also be found in the **Modalities** section of the Orthanc Web interface.  
+
+As a third option, files can be uploaded directly via drag-and-drop using the Orthanc Web UI.
+
+Once uploaded, the DICOM files can be accessed, inspected, and visualized through the Orthanc instance along with its integrated OHIF viewer.
+
+---
+
+### 1.1.2 DICOM Manual Annotation [Optional]  
+
+For supervised tasks, both the medical images and their corresponding annotated masks are required for the model to learn the desired task. Existing segmentation masks can be uploaded as DICOM SEG files using the same procedure as for the images through Orthanc. Alternatively, masks can be manually annotated using any of the tools available in MAIA:  
+
+- **OHIF Viewer Annotation Tools**  
+- **3D Slicer in the MAIA Workspace**: Link 3D Slicer to Orthanc as a DICOM server, download the images into Slicer, and upload the annotated masks. Upload can be done using either DICOMWeb or DICOM C-STORE protocols.  
+
+The main advantage of using tools like 3D Slicer in the MAIA Workspace or the OHIF interface is that both the workspace and Orthanc are within the same internal network. This allows communication with Orthanc via its internal IP, e.g., `aida-workshop-orthanc-svc-orthanc:4242`, ensuring that the data never leave the platform and remain fully secure.
+
+---
+
+### 1.2 DICOM to NIFTI Conversion
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Preprocessing.png" alt="Data Preprocessing" style="width:70%;" />
+</p>
+Most deep learning frameworks for medical image processing perform better with NIFTI images, where each case is stored as a single 3D volume along with its corresponding annotation mask, rather than using the native DICOM format. Therefore, it is necessary to export DICOM images and their associated DICOM SEG annotations into NIFTI format within the MAIA Workspace, ensuring the dataset is ready for downstream model training tasks.  
+
+A Kubeflow Pipeline is available in MAIA to handle the DICOM-to-NIFTI conversion [DICOM-to-NIFTI_pipeline.yaml](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Pipelines/DICOM_to_NIFTI_pipeline.yaml). To run it, specify the DICOM WEB url and the output directory for the NIFTI files:
+```yaml
+studies: <ORTHANC_DICOM_WEB_URL>
+output_folder: /mnt/Data/NIFTI/Task09_Spleen
+```
+After the successful execution of the Pipeline, you will find the NIFTI converted dataset under `output_folder`.
+
+---
+
+### 1.3 Data Preparation and Preprocessing for Image Segmentation with nnUNet  
+
+In this tutorial, we will use the **Spleen Dataset** to build a model for automatic spleen segmentation in CT images. The process will rely on the **MONet Bundle**, which provides an end-to-end workflow for model development, training, and packaging for deployment. The MONet Bundle is specifically designed to integrate the state-of-the-art **nnUNet** framework—the benchmark for medical image segmentation—within the MONet ecosystem, enabling seamless support for deployment, active learning, and federated learning.
+
+Using the MONet Bundle is highly convenient, as it allows researchers to implement a complete, automated pipeline for bringing advanced segmentation models into clinical workflows. To get started, only a configuration file is required, where details about the dataset, training parameters, and task specifications are defined.
+
+```yaml
+data_dir: "/mnt/Data/Task09_Spleen" # Location of the dataset directory
+nnunet_root_dir: "/mnt/Data/nnUNet" # Location where to create and populate the nnUNet directory
+dataset_name_or_id: "09"            # A unique identifier for the task
+dataset_format: "subfolders"        # The dataset directory format. Can be decathlon or subfolders
+modality_dict:                      # Dictionary for identifying modalities and segmentation files from the suffix and extension
+    image: ".nii.gz"
+    label: ".nii.gz"
+output_data_dir: "/mnt/Data/Task09_Spleen"
+experiment_name: "Task09_Spleen_CIFS"  # Experiment name to use in MLflow
+concat_modalities_flag: false          # Flag to configure modality concatenation in 4D volume. Only valid if the dataset has multimodal images.
+labels:                                # Segmentation labels, including the background
+    background: 0
+    Spleen: 1
+label_dict:
+    Spleen: 1
+bundle_config:
+  bundle_root: "/mnt/Data/MONet_Bundle/Task09/MONetBundle"  # Where to save the MONet Bundle
+  tracking_uri: "https://mlflow.fed-lymphoma.maia-small.se" # MLflow tracking server URI
+  mlflow_run_name: "run_fold_0"                               # MLflow run name
+continue_training: true                                     # Flag to continue training from a checkpoint [OPTIONAL]
+run_validation_only: false                                 # Flag to run only the validation step at the end of training [OPTIONAL]
+```
+To run the Data Preparation and Preprocessing step, we create the corresponding Configuration file for our task:
+
+```bash
+mkdir -p /home/maia-user/shared/configs
+cat <<EOF > /home/maia-user/shared/configs/Task09_Spleen_config.yaml
+data_dir: /mnt/Data/NIFTI/Task09_Spleen
+nnunet_root_dir: /mnt/Data/nnUNet
+dataset_name_or_id: "09"
+dataset_format: "subfolders"
+modality_dict:
+  image: "_image.nii.gz"
+  label: "_label.nii.gz"
+output_data_dir: /mnt/Data/NIFTI/Task09_Spleen
+experiment_name: "Task09_Spleen"
+concat_modalities_flag: false
+labels:
+  background: 0
+  Spleen: 1
+label_dict:
+  Spleen: 1
+bundle_config:
+  bundle_root: "/mnt/Data/MONet_Bundle/Task09/MONetBundle"
+  tracking_uri: "https://aida-workshop.maia-small.cloud.cbh.kth.se/mlflow"
+  mlflow_run_name: "nnUNet"
+EOF
+```
+
+And then we can run the KubeFlow pipeline for this step, [MONet-Pipeline-Plan-and-Preprocess](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/KubeFlow/Pipelines/MONet_pipeline_Plan_and_Preprocess.yaml), specifying where to locate the configuration file:
+```yaml
+config_file_path: configs/Task09_Spleen_config.yaml
+```
+
         </textarea>
       </section>
     </div>
