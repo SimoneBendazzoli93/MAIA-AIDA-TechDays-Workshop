@@ -6,7 +6,7 @@ Repository containing presentation slides and supporting materials for MAIA Tuto
   - [Table of Contents](#table-of-contents)
   - [Introduction to MAIA](#introduction-to-maia)
     - [Why MAIA?](#why-maia)
-    - [Learn More](#learn-more)
+    - [Learn more about MAIA](#learn-more-about-maia)
     - [MAIA in 5 minutes](#maia-in-5-minutes)
       - [MAIA Projects](#maia-projects)
     - [User Registration](#user-registration)
@@ -49,7 +49,8 @@ Repository containing presentation slides and supporting materials for MAIA Tuto
 <p align="center">
     <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Cover_Aurora_Snow-Night.png" alt="MAIA Cover" style="width:80%;" />
 </p>
-Artificial Intelligence in healthcare is advancing rapidly, with the potential to transform medical imaging, diagnostics, and patient care.  
+Artificial Intelligence in healthcare is advancing rapidly, with the potential to transform medical imaging, diagnostics, and patient care. 
+
 Yet, one of the biggest challenges remains: the gap between **AI research** and its **real-world clinical application**.
 
 **MAIA** was created to **bridge this gap**.  
@@ -65,12 +66,64 @@ In short, MAIA is more than just a technical workspace, it is a **collaborative 
 
 ---
 
-### Learn More
+### Learn more about MAIA
 
-[![GitHub](https://img.shields.io/badge/GitHub-MAIA-181717?style=flat&logo=github&logoColor=white)](https://github.com/kthcloud/maia)  
-[![arXiv](https://img.shields.io/badge/arXiv-2507.19489-B31B1B?style=flat&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2507.19489)  
-[![Website](https://img.shields.io/badge/Website-MAIA-4AB197?style=flat&logo=appveyor&logoColor=white)](https://maia.app.cloud.cbh.kth.se/)
-[![Documentation](https://img.shields.io/badge/Docs-MAIA-0078D4?style=flat&logo=read-the-docs&logoColor=white)](https://maia-toolkit.readthedocs.io/en/latest/)
+<!-- Row 1: 3 items -->
+<div align="center" style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+
+  <!-- GitHub -->
+  <div>
+    <a href="https://github.com/kthcloud/maia">
+      <img src="https://img.shields.io/badge/GitHub-MAIA-181717?style=flat&logo=github&logoColor=white" alt="GitHub">
+    </a>
+    <br>
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/GH-Code.svg" alt="GH Code" style="width:160px; margin-top:5px;">
+  </div>
+
+  <!-- arXiv -->
+  <div>
+    <a href="https://arxiv.org/abs/2507.19489">
+      <img src="https://img.shields.io/badge/arXiv-2507.19489-B31B1B?style=flat&logo=arxiv&logoColor=white" alt="arXiv">
+    </a>
+     <br>
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/ArXiv-Logo.svg" alt="ArXiv Code" style="width:160px; margin-top:5px;">
+  </div>
+
+  <!-- Website -->
+  <div>
+    <a href="https://maia.app.cloud.cbh.kth.se/">
+      <img src="https://img.shields.io/badge/Website-MAIA-4AB197?style=flat&logo=appveyor&logoColor=white" alt="Website">
+    </a>
+    <br>
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/MAIA-Code.svg" alt="MAIA Code" style="width:160px; margin-top:5px;">
+  </div>
+
+</div>
+
+<br>
+
+<!-- Row 2: 2 items -->
+<div align="center" style="display: flex; justify-content: center; gap: 20px;">
+
+  <!-- Documentation -->
+  <div>
+    <a href="https://maia-toolkit.readthedocs.io/en/latest/">
+      <img src="https://img.shields.io/badge/Docs-MAIA-0078D4?style=flat&logo=read-the-docs&logoColor=white" alt="Docs">
+    </a>
+     <br>
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/ReadTheDocs-Logo.svg" alt="ReadTheDocs Code" style="width:160px; margin-top:5px;">
+  </div>
+
+  <!-- PyPI -->
+  <div>
+    <a href="https://pypi.org/project/maia-toolkit">
+      <img src="https://img.shields.io/badge/PyPI-MAIA-3776AB?style=flat&logo=python&logoColor=white" alt="PyPI">
+    </a>
+         <br>
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/PyPi-Code.svg" alt="PyPi Code" style="width:160px; margin-top:5px;">
+  </div>
+
+</div>
 
 ---
 ### MAIA in 5 minutes
@@ -96,7 +149,7 @@ Entrypoints to the workspace include:
 - SSH Connection  
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/kthcloud/maia/master/dashboard/image/README/MAIA_Workspace.png" width="90%" alt='MAIA'>
+  <img src="https://raw.githubusercontent.com/kthcloud/maia/master/dashboard/image/README/MAIA_Workspace.png" width="50%" alt='MAIA'>
 </p>
 
 ---
@@ -111,7 +164,7 @@ To register in the MAIA Project, created for the MAIA Workshop, and getting acce
 
 Once registered, you will have access to all workshop materials and resources.
 <p align="center">
-    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Registration_Form.png" alt="Registration Form" style="width:50%;" />
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Registration_Form.png" alt="Registration Form" style="width:30%;" />
 </p>
 
 ---
@@ -327,7 +380,7 @@ config_file_path: configs/Task09_Spleen_config.yaml
 ---
 
 #### MLFlow Integration
-When training with the MONet Bundle, all runs are automatically tracked in **MLFlow**, including:
+When training with the MONet Bundle, all runs are automatically tracked in [**MLFlow**](https://aida-workshop.maia-small.cloud.cbh.kth.se/mlflow), including:
 - Training metrics  
 - Hyperparameters  
 - Model artifacts  
@@ -359,7 +412,7 @@ config_file_path: configs/Task09_Spleen_config.yaml
 ---
 
 #### Visualization with DTale
-After validation, results can be explored with **DTale**.  
+After validation, results can be explored with [**DTale**](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/DTale.ipynb).  
 
 DTale provides:
 - A user-friendly interface for analyzing validation results  

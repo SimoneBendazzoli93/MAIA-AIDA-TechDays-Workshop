@@ -7,12 +7,61 @@
   
   <!-- Reveal.js CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/sky.css">
-
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/white.css">
+  <!-- white.css black.css moon.css beige.css  sky.css moon.css night.css serif.css-->
   <!-- Highlight.js for code syntax -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.8.0/styles/monokai.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
+<nav id="logo-menu">
+  <ul>
+  <li>
+    <a href="javascript:void(0);" onclick="Reveal.slide(0,0)" title="Home" class="menu-item">
+      <i class="fa fa-home" aria-hidden="true"></i>
+    </a>
+  </li>
+
+  <li>
+    <a href="https://maia.app.cloud.cbh.kth.se/maia/namespaces/aida-workshop" class="menu-item">
+      <i class="fa fa-globe" aria-hidden="true"></i>
+    </a>
+  </li>
+
+    <li><a href="#part-1-end-to-end-model-development-and-deployment-workflow">Part I - End-to-end Model Development and Deployment</a></li>
+
+    <li><a href="https://aida-workshop.maia-small.cloud.cbh.kth.se" target="_blank">
+      <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Jupyter-Dark.png" alt="JupyterHub">
+    </a></li>
+
+    <li><a href="https://kubeflow.maia-small.se" target="_blank">
+      <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/KubeFlow-Dark.png" alt="Kubeflow">
+    </a></li>
+
+    <li><a href="https://aida-workshop.maia-small.cloud.cbh.kth.se/minio-console" target="_blank">
+      <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/MinIO.png" alt="MinIO">
+    </a></li>
+
+    <li><a href="https://aida-workshop.maia-small.cloud.cbh.kth.se/orthanc-Zocu4r8gPAimKpAR" target="_blank">
+      <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Orthanc-Logo.png" alt="Orthanc">
+    </a></li>
+
+    <li><a href="https://aida-workshop.maia-small.cloud.cbh.kth.se/orthanc-Zocu4r8gPAimKpAR/ohif/" target="_blank">
+      <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/OHIF.png" alt="OHIF Viewer">
+    </a></li>
+
+    <li><a href="https://aida-workshop.maia-small.cloud.cbh.kth.se/mlflow" target="_blank">
+      <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/MLFlow.png" alt="MLFlow">
+    </a></li>
+    <li><a href="https://kubeflow.maia-small.se/notebook/aida-workshop/simben-40kth-2ese/proxy/80/desktop/simben@kth.se/" target="_blank" class="menu-item">
+      <i class="fa fa-desktop" aria-hidden="true"></i>
+    </a></li>
+
+  </ul>
+</nav>
   <div class="reveal">
     <div class="slides">
       <!-- Slides will be injected here from Markdown -->
@@ -70,6 +119,7 @@ Repository containing presentation slides and supporting materials for MAIA Tuto
     <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Cover_Aurora_Snow-Night.png" alt="MAIA Cover" style="width:80%;" />
 </p>
 Artificial Intelligence in healthcare is advancing rapidly, with the potential to transform medical imaging, diagnostics, and patient care.  
+
 Yet, one of the biggest challenges remains: the gap between **AI research** and its **real-world clinical application**.
 
 **MAIA** was created to **bridge this gap**.  
@@ -85,12 +135,64 @@ In short, MAIA is more than just a technical workspace, it is a **collaborative 
 
 ---
 
-### Learn More
+### Learn more about MAIA
 
-[![GitHub](https://img.shields.io/badge/GitHub-MAIA-181717?style=flat&logo=github&logoColor=white)](https://github.com/kthcloud/maia)  
-[![arXiv](https://img.shields.io/badge/arXiv-2507.19489-B31B1B?style=flat&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2507.19489)  
-[![Website](https://img.shields.io/badge/Website-MAIA-4AB197?style=flat&logo=appveyor&logoColor=white)](https://maia.app.cloud.cbh.kth.se/)
-[![Documentation](https://img.shields.io/badge/Docs-MAIA-0078D4?style=flat&logo=read-the-docs&logoColor=white)](https://maia-toolkit.readthedocs.io/en/latest/)
+<!-- Row 1: 3 items -->
+<div align="center" style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+
+  <!-- GitHub -->
+  <div>
+    <a href="https://github.com/kthcloud/maia">
+      <img src="https://img.shields.io/badge/GitHub-MAIA-181717?style=flat&logo=github&logoColor=white" alt="GitHub">
+    </a>
+    <br>
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/GH-Code.svg" alt="GH Code" style="width:160px; margin-top:5px;">
+  </div>
+
+  <!-- arXiv -->
+  <div>
+    <a href="https://arxiv.org/abs/2507.19489">
+      <img src="https://img.shields.io/badge/arXiv-2507.19489-B31B1B?style=flat&logo=arxiv&logoColor=white" alt="arXiv">
+    </a>
+     <br>
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/ArXiv-Logo.svg" alt="ArXiv Code" style="width:160px; margin-top:5px;">
+  </div>
+
+  <!-- Website -->
+  <div>
+    <a href="https://maia.app.cloud.cbh.kth.se/">
+      <img src="https://img.shields.io/badge/Website-MAIA-4AB197?style=flat&logo=appveyor&logoColor=white" alt="Website">
+    </a>
+    <br>
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/MAIA-Code.svg" alt="MAIA Code" style="width:160px; margin-top:5px;">
+  </div>
+
+</div>
+
+<br>
+
+<!-- Row 2: 2 items -->
+<div align="center" style="display: flex; justify-content: center; gap: 20px;">
+
+  <!-- Documentation -->
+  <div>
+    <a href="https://maia-toolkit.readthedocs.io/en/latest/">
+      <img src="https://img.shields.io/badge/Docs-MAIA-0078D4?style=flat&logo=read-the-docs&logoColor=white" alt="Docs">
+    </a>
+     <br>
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/ReadTheDocs-Logo.svg" alt="ReadTheDocs Code" style="width:160px; margin-top:5px;">
+  </div>
+
+  <!-- PyPI -->
+  <div>
+    <a href="https://pypi.org/project/maia-toolkit">
+      <img src="https://img.shields.io/badge/PyPI-MAIA-3776AB?style=flat&logo=python&logoColor=white" alt="PyPI">
+    </a>
+         <br>
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/PyPi-Code.svg" alt="PyPi Code" style="width:160px; margin-top:5px;">
+  </div>
+
+</div>
 
 ---
 ### MAIA in 5 minutes
@@ -116,7 +218,7 @@ Entrypoints to the workspace include:
 - SSH Connection  
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/kthcloud/maia/master/dashboard/image/README/MAIA_Workspace.png" width="90%" alt='MAIA'>
+  <img src="https://raw.githubusercontent.com/kthcloud/maia/master/dashboard/image/README/MAIA_Workspace.png" width="50%" alt='MAIA'>
 </p>
 
 ---
@@ -131,7 +233,7 @@ To register in the MAIA Project, created for the MAIA Workshop, and getting acce
 
 Once registered, you will have access to all workshop materials and resources.
 <p align="center">
-    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Registration_Form.png" alt="Registration Form" style="width:50%;" />
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Registration_Form.png" alt="Registration Form" style="width:30%;" />
 </p>
 
 ---
@@ -633,7 +735,8 @@ One key advantage of this process is that it produces a **single, standalone fil
   <script>
     Reveal.initialize({
       hash: true,
-      plugins: [ RevealMarkdown, RevealHighlight ]
+      plugins: [ RevealMarkdown, RevealHighlight ],
+      transition: 'slide',  // options: none, fade, slide, convex, concave, zoom
     });
   </script>
 <style>
@@ -649,6 +752,7 @@ One key advantage of this process is that it produces a **single, standalone fil
     box-sizing: border-box;
     font-size: 0.4em; /* adjust as needed: 0.7em, 0.75em, etc. */
     line-height: 1.2em; /* optional: tighter line spacing */
+    font-family: 'Roboto', sans-serif;
 }
 
 /* Optional: make images scale properly */
@@ -659,6 +763,72 @@ One key advantage of this process is that it produces a **single, standalone fil
     display: block;
     margin: auto;
 }
+#logo-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.85);
+  z-index: 9999;
+  padding: 5px 0;
+}
+
+#logo-menu ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  gap: 20px;
+}
+
+#logo-menu li {
+  display: flex;
+  align-items: center;
+}
+
+#logo-menu a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  transition: transform 0.2s;
+}
+
+#logo-menu a img, #logo-menu a i {
+  height: 40px;
+}
+
+#logo-menu a:hover {
+  transform: scale(1.2);
+}
+
+#logo-menu a.menu-item {
+  display: flex;
+  align-items: center; /* vertically center icon and text */
+  gap: 5px;           /* space between icon and text */
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+#logo-menu a.menu-item i {
+  font-size: 40px; /* adjust icon size */
+  line-height: 1;
+}
+
+#logo-menu a.menu-item span {
+  display: inline-block;
+}
+
+
+  /* Push slides content below the bar */
+  .reveal {
+    padding-top: 140px; /* height of bar + some spacing */
+  }
 </style>
 </body>
 </html>
