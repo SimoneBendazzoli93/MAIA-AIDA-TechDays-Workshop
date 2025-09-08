@@ -26,6 +26,7 @@ Repository containing presentation slides and supporting materials for MAIA Tuto
       - [MLFlow Integration](#mlflow-integration)
       - [Validation](#validation)
       - [Visualization with DTale](#visualization-with-dtale)
+        - [DTale link](#dtale-link)
     - [1.5 Model Training and Validation with nnUNet \[HPC\]](#15-model-training-and-validation-with-nnunet-hpc)
       - [Running Jobs on HPC](#running-jobs-on-hpc)
       - [Requirements](#requirements)
@@ -37,10 +38,21 @@ Repository containing presentation slides and supporting materials for MAIA Tuto
       - [Retrieving the Trained Model](#retrieving-the-trained-model)
       - [Converting the Checkpoint](#converting-the-checkpoint)
       - [Running Validation](#running-validation)
-      - [Visualization with DTALe](#visualization-with-dtale-1)
+      - [Visualization with DTale](#visualization-with-dtale-1)
+        - [DTale link](#dtale-link-1)
     - [1.6 Model Packaging](#16-model-packaging)
-    - [Packaging nnUNet with MONAI Bundle](#packaging-nnunet-with-monai-bundle)
+      - [Packaging nnUNet with MONAI Bundle](#packaging-nnunet-with-monai-bundle)
       - [Step 1: Create a Metadata File](#step-1-create-a-metadata-file)
+    - [1.7 Model Deployment and Inference](#17-model-deployment-and-inference)
+        - [Option 1: Model File Sharing](#option-1-model-file-sharing)
+        - [Option 2: Docker Container with MONAI Deploy](#option-2-docker-container-with-monai-deploy)
+          - [Docker Image Variants](#docker-image-variants)
+          - [Example Segmentation Task File (Spleen Segmentation)](#example-segmentation-task-file-spleen-segmentation)
+          - [Building the Docker Image](#building-the-docker-image)
+          - [Running the Docker Images](#running-the-docker-images)
+          - [Run via MONet Bundle:](#run-via-monet-bundle)
+          - [Run Directly with Docker:](#run-directly-with-docker)
+          - [Integration with the MAIA Platform:](#integration-with-the-maia-platform)
 
 ---
 ## Introduction to MAIA
@@ -414,6 +426,7 @@ config_file_path: configs/Task09_Spleen_config.yaml
 #### Visualization with DTale
 After validation, results can be explored with [**DTale**](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/DTale.ipynb).  
 
+##### [DTale link](https://kubeflow.maia-small.se/notebook/aida-workshop/simben-40kth-2ese/proxy/40000/dtale/main/1)
 DTale provides:
 - A user-friendly interface for analyzing validation results  
 - Interactive plots and charts  
@@ -473,7 +486,7 @@ export BOKEH_ALLOW_WS_ORIGIN=aida-workshop.maia-small.cloud.cbh.kth.se
 panel serve --dev HPC.ipynb --port 5006
 ```
 And then access it via:
-[MAIA-HPC](https://aida-workshop.maia-small.cloud.cbh.kth.se/user/<USER-EMAIL>/proxy/5006/HPC)
+[MAIA-HPC](https://kubeflow.maia-small.se/notebook/aida-workshop/simben-40kth-2ese/proxy/5006/HPC)
 
 ---
 
@@ -550,10 +563,11 @@ Then:
 
 ---
 
-#### Visualization with DTALe
-Finally, visualize the results with **DTALe**, as described in the local training section.  
-DTALe provides interactive plots and metrics exploration for evaluating model performance.
+#### Visualization with DTale
+Finally, visualize the results with **DTale**, as described in the local training section.  
+DTale provides interactive plots and metrics exploration for evaluating model performance.
 
+##### [DTale link](https://kubeflow.maia-small.se/notebook/aida-workshop/simben-40kth-2ese/proxy/40000/dtale/main/1)
 ---
 
 ### 1.6 Model Packaging
@@ -562,7 +576,7 @@ Once a model has been trained and validated, the next step is to make it shareab
 
 This is achieved through **model packaging**, which means bundling the model together with all the necessary metadata, configuration files, and usage instructions. The goal is to provide a standardized, standalone package that can be easily integrated into different systems with minimal effort. Proper packaging ensures that the model can be deployed in clinical workflows quickly and efficiently, allowing users to obtain results within seconds with minimal intervention.
 
-### Packaging nnUNet with MONAI Bundle
+#### Packaging nnUNet with MONAI Bundle
 
 In this tutorial, we will package the trained **nnUNet** model using the **MONAI Bundle** concept.  
 The MONAI Bundle is a framework designed to simplify the packaging and deployment of medical imaging models.  
@@ -652,3 +666,145 @@ With this pipeline, we will convert the trained **PyTorch** model along with the
 TorchScript is optimized for deployment and allows models to run independently of Python, making them suitable for integration into different systems.  
 
 One key advantage of this process is that it produces a **single, standalone file** containing the model, which can be easily shared and reused across various environments.
+
+---
+
+### 1.7 Model Deployment and Inference  
+
+After packaging, the model is ready for deployment. At this stage, there are several ways to share the model with others or integrate it into clinical workflows. The best approach depends on the intended use case, the desired level of automation and integration, and the amount of setup effort acceptable for end users. In this section, we present three primary deployment options.  
+
+
+##### Option 1: Model File Sharing  
+
+The most straightforward way to share the model is by distributing the standalone **TorchScript** file.  
+This approach requires minimal setup: users only need to prepare a Python environment with the necessary dependencies and can immediately run inference on their own data.  
+
+**Requirements:**  
+- PyTorch ≥ 2.6.0 with CUDA support  
+- MONAI Bundle (`monai-bundle`)  
+
+```bash
+MONet_local_inference -i /home/maia-user/shared/Task09_Spleen/imagesTs/spleen_1.nii.gz -o /home/maia-user/shared/Task09_Spleen/predsTs --model /home/maia-user/shared/MONet_Bundle/Task09/MONetBundle/models/fold_0/model.ts --username NOUSER
+```
+
+---
+
+##### Option 2: Docker Container with MONAI Deploy  
+
+This option requires more setup effort initially but makes usage much easier for the end user, since no extra installation or configuration is needed.  
+The model and all of its dependencies are packaged within a Docker container, ensuring a consistent runtime environment on any system that supports Docker.  
+
+With the [**MONAI Deploy**](https://monai.io/deploy) framework, we can build standardized containers that bundle the model and all necessary components for inference. This simplifies deployment and guarantees reproducible execution across different platforms.  
+
+---
+
+###### Docker Image Variants  
+
+Two Docker image variants can be built, depending on the input data format:  
+- **DICOM-based container**: takes DICOM images as input and outputs DICOM SEG  
+- **NIfTI-based container**: takes NIfTI images as input and outputs NIfTI segmentation masks  
+
+To allow the container to automatically detect which DICOM series or NIfTI file to process, a **Segmentation Task file** is required.  
+This file defines the DICOM tags or NIfTI filename patterns to locate the input images, as well as the DICOM tags to use for the output segmentation.  
+
+###### Example Segmentation Task File (Spleen Segmentation)  
+
+```yaml
+tasks:
+  Spleen:
+    Modalities:
+      image:
+        File_Pattern: ".nii.gz"
+        Rules_Text: |
+          {
+              "selections": [
+                  {
+                      "name": "CT Series",
+                      "conditions": {
+                          "StudyDescription": "(.*?)",
+                          "Modality": "(?i)CT",
+                          "SeriesDescription": "(.*?)"
+                      }
+                  }
+              ]
+          }
+    Segments:
+      - segment_label: "Spleen"
+        segmented_property_category:
+          code: "91772007"
+          scheme: "SCT"
+          meaning: "Organ"
+        segmented_property_type:
+          code: "78961009"
+          scheme: "SCT"
+          meaning: "Spleen"
+        algorithm_name: "MAIA_Segmentation-Spleen"
+```
+---
+
+###### Building the Docker Image
+
+We provide a KubeFlow pipeline for building the Docker image:
+[Docker-Build-Pipeline](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/KubeFlow/Pipelines/Docker_Build_pipeline.yaml)
+
+Parameters to specify:
+```yaml
+"context": "docker/Spleen-HPC" # Path where to create the Docker context
+"destination": "maiacloud/aida-workshop-spleen:1.0"             # Docker image name and tag for the DICOM-based container
+"destination_nifti": "maiacloud/aida-workshop-spleen:1.0-nifti" # Docker image name and tag for the NIfTI-based container
+"segmentation_task_file": "Segmentation_Task.yaml"              # Path to the segmentation task file
+"model_file": "MONet_Bundle/Task09/MONetBundle/models/fold_0/model.ts" # Path to the TorchScript model file
+```
+⚠️ Note: To successfully push the Docker image to your registry, the KubeFlow pipeline requires a secret named maiacloud-dockerhub in the same namespace where the pipeline is executed.
+Instructions for creating the secret can be found here: [Instruction to Create a Docker Registry Secret](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/Kubeflow.ipynb).
+
+---
+
+###### Running the Docker Images
+
+Once built, the images can be used on any Docker-enabled system.
+They are available here:
+
+[Docker Hub](https://hub.docker.com/r/maiacloud/aida-workshop-spleen)
+
+###### Run via MONet Bundle:
+
+```bash
+MONet_inference_nifti --study_folder /path/to/input/folder --prediction_output_folder /path/to/output/folder --docker-image maiacloud/aida-workshop-spleen:1.0-nifti
+```
+or for DICOM input:
+
+```bash
+MONet_inference_dicom --dicom_study_folder /path/to/input/folder --prediction_output_folder /path/to/output/folder --docker-image maiacloud/aida-workshop-spleen:1.0
+```
+
+###### Run Directly with Docker:
+
+```bash
+docker run --gpus all --shm-size 2g --rm -v /path/to/input/folder:/var/holoscan/input -v /path/to/output/folder:/var/holoscan/output maiacloud/aida-workshop-spleen:1.0-nifti
+```
+or for DICOM input:
+
+```bash
+docker run --gpus all --shm-size 2g --rm -v /path/to/input/folder:/var/holoscan/input -v /path/to/output/folder:/var/holoscan/output maiacloud/aida-workshop-spleen:1.0
+```
+---
+
+###### Integration with the MAIA Platform:
+
+For direct use within the MAIA platform, we also provide a KubeFlow pipeline that executes the Docker container directly:
+[MONet-Inference-Pipeline](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/KubeFlow/Pipelines/MONet_Inference_pipeline.yaml)
+
+Parameters to specify:
+
+```yaml
+"input_folder_path": "Task09_Spleen/DICOM/spleen_1"
+"output_folder_path": "Task09_Spleen/SEG/spleen_1"
+"image": "maiacloud/aida-workshop-spleen:1.0"
+```
+or for NIfTI input:
+```yaml
+"input_folder_path": "Task09_Spleen/NIFTI/imagesTs/spleen_1"
+"output_folder_path": "Task09_Spleen/NIFTI/imagesTs/spleen_1"
+"image": "maiacloud/aida-workshop-spleen:1.0-nifti"
+```
