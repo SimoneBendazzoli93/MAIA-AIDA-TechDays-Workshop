@@ -4,6 +4,7 @@
 # Inputs:
 #    context: str
 #    destination: str
+#    destination_nifti: str
 #    model_file: str
 #    segmentation_task_file: str
 components:
@@ -167,10 +168,7 @@ root:
             context:
               componentInputParameter: context
             destination:
-              runtimeValue:
-                constant: '{{$.inputs.parameters[''pipelinechannel--destination'']}}'
-            pipelinechannel--destination:
-              componentInputParameter: destination
+              componentInputParameter: destination_nifti
         taskInfo:
           name: build-docker-image-nifti
       create-docker-context:
@@ -193,6 +191,8 @@ root:
       context:
         parameterType: STRING
       destination:
+        parameterType: STRING
+      destination_nifti:
         parameterType: STRING
       model_file:
         parameterType: STRING
