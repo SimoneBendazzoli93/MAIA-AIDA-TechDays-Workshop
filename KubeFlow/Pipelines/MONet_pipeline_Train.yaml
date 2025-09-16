@@ -47,7 +47,7 @@ deploymentSpec:
           ,\"r\") as f:\n        config_dict = yaml.safe_load(f)\n    print(config_dict)\n\
           \n    start = time.time()\n    os.environ[\"PYTHONPATH\"]= config_dict[\"\
           bundle_config\"][\"bundle_root\"]\n    subprocess.run([\"python3\",\n  \
-          \                 \"/opt/pipeline.py\",\n                    \"--config\"\
+          \                 \"MONet_pipeline\",\n                    \"--config\"\
           ,\n                    \"/tmp/config_train.yaml\"])\n    end = time.time()\n\
           \    print(f\"Elapsed time: {end - start:.1f} seconds\")\n\n"
         image: maiacloud/monet-pipeline:1.3

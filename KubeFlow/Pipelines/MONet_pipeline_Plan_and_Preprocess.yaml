@@ -60,7 +60,7 @@ deploymentSpec:
           \        config_dict = yaml.safe_load(f)\n    print(config_dict)\n\n   \
           \ start = time.time()\n    os.environ[\"PYTHONPATH\"]= config_dict[\"bundle_config\"\
           ][\"bundle_root\"]\n    subprocess.run([\"python3\",\n                 \
-          \  \"/opt/pipeline.py\",\n                    \"--config\",\n          \
+          \  \"MONet_pipeline\",\n                    \"--config\",\n          \
           \          \"/tmp/config_plan_and_preprocess.yaml\"])\n    end = time.time()\n\
           \    print(f\"Elapsed time: {end - start:.1f} seconds\")\n\n"
         image: maiacloud/monet-pipeline:1.3
@@ -108,7 +108,7 @@ deploymentSpec:
           ,\"r\") as f:\n        config_dict = yaml.safe_load(f)\n    print(config_dict)\n\
           \n    start = time.time()\n    os.environ[\"PYTHONPATH\"]= config_dict[\"\
           bundle_config\"][\"bundle_root\"]\n    subprocess.run([\"python3\",\n  \
-          \                 \"/opt/pipeline.py\",\n                    \"--config\"\
+          \                 \"MONet_pipeline\",\n                    \"--config\"\
           ,\n                    \"/tmp/config_prepare.yaml\"])\n    end = time.time()\n\
           \    print(f\"Elapsed time: {end - start:.1f} seconds\")\n\n"
         image: maiacloud/monet-pipeline:1.3
@@ -159,7 +159,7 @@ deploymentSpec:
           \    subprocess.run([\"MONet_fetch_bundle\",\"--bundle_path\", Path(config_dict[\"\
           bundle_config\"][\"bundle_root\"]).parent])\n    start = time.time()\n \
           \   os.environ[\"PYTHONPATH\"]= config_dict[\"bundle_config\"][\"bundle_root\"\
-          ]\n    subprocess.run([\"python3\",\n                   \"/opt/pipeline.py\"\
+          ]\n    subprocess.run([\"python3\",\n                   \"MONet_pipeline\"\
           ,\n                    \"--config\",\n                    \"/tmp/config_prepare_bundle.yaml\"\
           ])\n    end = time.time()\n    print(f\"Elapsed time: {end - start:.1f}\
           \ seconds\")\n\n"

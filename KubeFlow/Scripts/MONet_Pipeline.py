@@ -25,7 +25,7 @@ def prepare(config_file_path: str):
     start = time.time()
     os.environ["PYTHONPATH"]= config_dict["bundle_config"]["bundle_root"]
     subprocess.run(["python3",
-                   "/opt/pipeline.py",
+                   "MONet_pipeline.py",
                     "--config",
                     "/tmp/config_prepare.yaml"])
     end = time.time()
@@ -53,7 +53,7 @@ def plan_and_preprocess(config_file_path: str):
     start = time.time()
     os.environ["PYTHONPATH"]= config_dict["bundle_config"]["bundle_root"]
     subprocess.run(["python3",
-                   "/opt/pipeline.py",
+                   "MONet_pipeline",
                     "--config",
                     "/tmp/config_plan_and_preprocess.yaml"])
     end = time.time()
@@ -83,7 +83,7 @@ def prepare_bundle(config_file_path: str):
     start = time.time()
     os.environ["PYTHONPATH"]= config_dict["bundle_config"]["bundle_root"]
     subprocess.run(["python3",
-                   "/opt/pipeline.py",
+                   "MONet_pipeline",
                     "--config",
                     "/tmp/config_prepare_bundle.yaml"])
     end = time.time()
@@ -111,7 +111,7 @@ def train(config_file_path: str):
     start = time.time()
     os.environ["PYTHONPATH"]= config_dict["bundle_config"]["bundle_root"]
     subprocess.run(["python3",
-                   "/opt/pipeline.py",
+                   "MONet_pipeline",
                     "--config",
                     "/tmp/config_train.yaml"])
     end = time.time()
