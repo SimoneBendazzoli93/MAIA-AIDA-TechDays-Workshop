@@ -909,7 +909,7 @@ cp /home/maia-user/shared/MONet_Bundle/Task09/MONetBundle/models/fold_0/model.ts
 ---
 
 ###### Deploying the Model to the MAIA Segmentation Portal
-To deploy the model to the MAIA Segmentation Portal, follow the instructions provided in the [MONAI-Label Notebook](https://github.com/SimoneBendazzoli93/MONAI-Label/blob/main/MONAI-Label.ipynb).
+To deploy the model to the MAIA Segmentation Portal, follow the instructions provided in the [MONAI-Label Notebook](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/blob/main/MONAI-Label.ipynb).
 
 Once deployed, the model becomes accessible for inference through both the portal’s **web interface** and **API** : [https://spleen-segmentation.aida-workshop.maia-small.cloud.cbh.kth.se/](https://spleen-segmentation.aida-workshop.maia-small.cloud.cbh.kth.se/).  
 In the following section, we describe the different ways users can interact with the MAIA Segmentation Portal to submit inference requests and obtain segmentation results.  
@@ -971,7 +971,7 @@ This workflow is particularly useful for:
     <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Workflow_Deploy.png" alt="Radiology AI Workspace" style="width:50%;" />
 </p>
 
-An example of this workflow can be found in the [MAIA-Segmentation-Portal.ipynb](./MAIA-Segmentation-Portal.ipynb) notebook.
+An example of this workflow can be found in the [MAIA-Segmentation-Portal.ipynb](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/blob/main/MAIA-Segmentation-Portal.ipynb) notebook.
 
 ---
 
@@ -1187,7 +1187,7 @@ A practical demonstration of this approach—applied to PET-CT lymphoma segmenta
 
 ### Setting Up NVFlare with MAIA
  
-Within the MAIA workspace, it is possible to pre install a (**NVFlare Dashboard**)[https://nvflare.aida-workshop.maia-small.cloud.cbh.kth.se/] to be able to provision a NVFlare server and multiple clients, and start a federated learning experiment using MONet Bundles.
+Within the MAIA workspace, it is possible to pre install a [**NVFlare Dashboard**](https://nvflare.aida-workshop.maia-small.cloud.cbh.kth.se/) to be able to provision a NVFlare server and multiple clients, and start a federated learning experiment using MONet Bundles.
 Users can register to the NVFlare and get access to the their **Startup Kits**, which are used to get access to the NVFlare federation.
 Additionally, authorized users can register new clients to the federation, and get access to their **Startup Kits** to join the federation from the clients.
 
@@ -1258,9 +1258,7 @@ Once the Federation, formed by the server and multiple clients, is up and runnin
 In this tutorial, we demonstrate how to set up and run a **federated learning experiment for spleen segmentation** using [NVFlare](https://nvflare.readthedocs.io/en/main/) and **MONet Bundles**.  
 
 You can follow along using the provided notebook:  
-👉 [MONet-FL.ipynb](https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/MONet-FL.ipynb)
-
-
+👉 [MONet-FL.ipynb](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/blob/main/MONet-FL.ipynb)
 
 ---
 
