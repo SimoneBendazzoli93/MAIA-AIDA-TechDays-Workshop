@@ -1,0 +1,7 @@
+{
+    "context": "docker/Spleen-HPC",
+    "destination": "maiacloud/aida-workshop-spleen:1.0",
+    "destination_nifti": "maiacloud/aida-workshop-spleen:1.0-nifti",
+    "segmentation_task_file": "Segmentation_Task.yaml",
+    "model_file": "MONet_Bundle/Task09/MONetBundle/models/fold_0/model.ts"
+}

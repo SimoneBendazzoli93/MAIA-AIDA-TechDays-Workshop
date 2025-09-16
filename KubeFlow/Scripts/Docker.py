@@ -11,12 +11,12 @@ def create_docker_context(context: str, segmentation_task_file: str, model_file:
 
     subprocess.run(["rm", "-rf", clone_dir], check=True)
     subprocess.run(["git", "clone", repo_url, clone_dir], check=True)
-    subprocess.run(["mkdir", "-p", f"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0/models/model/"], check=True)
-    subprocess.run(["cp", "/data/"+segmentation_task_file, f"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0/Segmentation_Task.yaml"], check=True)
-    subprocess.run(["cp", "/data/"+model_file, f"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0/models/model/model.ts"], check=True)
-    subprocess.run(["mkdir", "-p", f"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0-nifti/models/model/"], check=True)
-    subprocess.run(["cp", "/data/"+segmentation_task_file, f"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0-nifti/Segmentation_Task.yaml"], check=True)
-    subprocess.run(["cp", "/data/"+model_file, f"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0-nifti/models/model/model.ts"], check=True)
+    subprocess.run(["mkdir", "-p", f"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64/models/model/"], check=True)
+    subprocess.run(["cp", "/data/"+segmentation_task_file, f"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64/Segmentation_Task.yaml"], check=True)
+    subprocess.run(["cp", "/data/"+model_file, f"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64/models/model/model.ts"], check=True)
+    subprocess.run(["mkdir", "-p", f"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64-nifti/models/model/"], check=True)
+    subprocess.run(["cp", "/data/"+segmentation_task_file, f"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64-nifti/Segmentation_Task.yaml"], check=True)
+    subprocess.run(["cp", "/data/"+model_file, f"{clone_dir}/deploy/monet-x64-workstation-dgpu-linux-amd64-nifti/models/model/model.ts"], check=True)
 
 
 
@@ -27,7 +27,7 @@ def build_docker_image(context: str, destination: str):
         command=[
             "/kaniko/executor",
             "--dockerfile=Dockerfile",
-            f"--context=/data/{context}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0",
+            f"--context=/data/{context}/deploy/monet-x64-workstation-dgpu-linux-amd64",
             f"--destination={destination}",
             "--build-arg",
             "UID=1000",
@@ -47,7 +47,7 @@ def build_docker_image_nifti(context: str, destination: str):
         command=[
             "/kaniko/executor",
             "--dockerfile=Dockerfile",
-            f"--context=/data/{context}/deploy/monet-x64-workstation-dgpu-linux-amd64:1.0-nifti",
+            f"--context=/data/{context}/deploy/monet-x64-workstation-dgpu-linux-amd64-nifti",
             f"--destination={destination}",
             "--build-arg",
             "UID=1000",

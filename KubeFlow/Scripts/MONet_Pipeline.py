@@ -3,7 +3,7 @@ from kfp import dsl
 from kfp import compiler
 
 
-@dsl.component(packages_to_install=['pytorch-ignite','SimpleITK','nibabel'],base_image="maiacloud/monet-pipeline:1.3")
+@dsl.component(packages_to_install=['pytorch-ignite','SimpleITK','nibabel','mlflow'],base_image="maiacloud/monet-pipeline:1.6")
 def prepare(config_file_path: str):    
     import time
     import os
@@ -30,7 +30,7 @@ def prepare(config_file_path: str):
     end = time.time()
     print(f"Elapsed time: {end - start:.1f} seconds")
 
-@dsl.component(packages_to_install=['pytorch-ignite','SimpleITK','nibabel'],base_image="maiacloud/monet-pipeline:1.3")
+@dsl.component(packages_to_install=['pytorch-ignite','SimpleITK','nibabel','mlflow'],base_image="maiacloud/monet-pipeline:1.6")
 def plan_and_preprocess(config_file_path: str):    
     import time
     import os
@@ -58,7 +58,7 @@ def plan_and_preprocess(config_file_path: str):
     end = time.time()
     print(f"Elapsed time: {end - start:.1f} seconds")
 
-@dsl.component(packages_to_install=['pytorch-ignite','SimpleITK','nibabel','monet-bundle'],base_image="maiacloud/monet-pipeline:1.3")
+@dsl.component(packages_to_install=['pytorch-ignite','SimpleITK','nibabel','monet-bundle','mlflow'],base_image="maiacloud/monet-pipeline:1.6")
 def prepare_bundle(config_file_path: str):    
     import time
     import os
@@ -87,8 +87,8 @@ def prepare_bundle(config_file_path: str):
                     "/tmp/config_prepare_bundle.yaml"])
     end = time.time()
     print(f"Elapsed time: {end - start:.1f} seconds")
-    
-@dsl.component(packages_to_install=['pytorch-ignite','odict','SimpleITK','nibabel'],base_image="maiacloud/monet-pipeline:1.3")
+
+@dsl.component(packages_to_install=['pytorch-ignite','odict','SimpleITK','nibabel','mlflow'],base_image="maiacloud/monet-pipeline:1.6")
 def train(config_file_path: str):    
     import time
     import os
@@ -116,7 +116,7 @@ def train(config_file_path: str):
     end = time.time()
     print(f"Elapsed time: {end - start:.1f} seconds")
 
-@dsl.component(packages_to_install=['pytorch-ignite','SimpleITK','nibabel'],base_image="maiacloud/monet-pipeline:1.3")
+@dsl.component(packages_to_install=['pytorch-ignite','SimpleITK','nibabel','mlflow'],base_image="maiacloud/monet-pipeline:1.6")
 def validate(config_file_path: str):    
     import time
     import os
@@ -145,7 +145,7 @@ def validate(config_file_path: str):
     print(f"Elapsed time: {end - start:.1f} seconds")
 
 
-@dsl.component(packages_to_install=['pytorch-ignite','SimpleITK','nibabel','monet-bundle'],base_image="maiacloud/monet-pipeline:1.4")
+@dsl.component(packages_to_install=['pytorch-ignite','SimpleITK','nibabel','monet-bundle','mlflow'],base_image="maiacloud/monet-pipeline:1.6")
 def convert_ckpt_to_ts(config_file_path: str):    
     import time
     import os
@@ -166,7 +166,7 @@ def convert_ckpt_to_ts(config_file_path: str):
     end = time.time()
     print(f"Elapsed time: {end - start:.1f} seconds")
 
-@dsl.component(packages_to_install=['pytorch-ignite','SimpleITK','nibabel','monet-bundle'],base_image="maiacloud/monet-pipeline:1.4")
+@dsl.component(packages_to_install=['pytorch-ignite','SimpleITK','nibabel','monet-bundle','mlflow'],base_image="maiacloud/monet-pipeline:1.6")
 def convert_ckpt_to_pt(config_file_path: str):    
     import os
     import yaml
