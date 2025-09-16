@@ -32,6 +32,8 @@
   </li>
 
     <li><a href="#part-1-end-to-end-model-development-and-deployment-workflow">Part I - End-to-end Model Development and Deployment</a></li>
+    <li><a href="#part-2-active-learning-with-monai-label">Part II - Active Learning</a></li>
+    <li><a href="#part-3-federated-learning-with-nvflare">Part III - Federated Learning</a></li>
 
     <li><a href="https://aida-workshop.maia-small.cloud.cbh.kth.se" target="_blank">
       <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Jupyter-Dark.png" alt="JupyterHub">
@@ -60,6 +62,9 @@
       <i class="fa fa-desktop" aria-hidden="true"></i>
     </a></li>
 
+    <li><a href="https://nvflare.aida-workshop.maia-small.cloud.cbh.kth.se" target="_blank">
+      <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/NVFlare_Logo.png" alt="NVFlare">
+    </a></li>
   </ul>
 </nav>
   <div class="reveal">
@@ -74,10 +79,6 @@ Simone Bendazzoli (KTH Royal Institute of Technology, Sweden and Karolinska Inst
 **17 September 2025**
 
 ---
-
-## Table of Contents
-- [MAIA-AIDA-TechDays-Workshop](#maia-aida-techdays-workshop)
-  - [Table of Contents](#table-of-contents)
   - [Introduction to MAIA](#introduction-to-maia)
     - [Why MAIA?](#why-maia)
     - [Learn more about MAIA](#learn-more-about-maia)
@@ -96,8 +97,26 @@ Simone Bendazzoli (KTH Royal Institute of Technology, Sweden and Karolinska Inst
     - [1.5 Model Training and Validation with nnUNet \[HPC\]](#15-model-training-and-validation-with-nnunet-hpc)
     - [1.6 Model Packaging](#16-model-packaging)
     - [1.7 Model Deployment and Inference](#17-model-deployment-and-inference)
+  - [Part 2: Active Learning with MONAI Label](#part-2-active-learning-with-monai-label)
+    - [Active Learning Cycle](#active-learning-cycle)
+    - [Active Learning with 3D Slicer and MONAI Label](#active-learning-with-3d-slicer-and-monai-label)
+    - [Starting the Active Learning Loop](#starting-the-active-learning-loop)
+    - [Training from Scratch](#training-from-scratch)
+  - [Part 3: Federated Learning with NVFlare](#part-3-federated-learning-with-nvflare)
+    - [Introduction to Federated Learning](#introduction-to-federated-learning)
+    - [NVFlare Overview](#nvflare-overview)
+    - [Brain Tumor Segmentation with Federated Learning for Enhanced Generalizability](#brain-tumor-segmentation-with-federated-learning-for-enhanced-generalizability)
+    - [Lymphoma Segmentation with Federated Learning for Enhanced Generalizability](#lymphoma-segmentation-with-federated-learning-for-enhanced-generalizability)
+    - [Setting Up NVFlare with MAIA](#setting-up-nvflare-with-maia)
+    - [Start the Server](#start-the-server)
+    - [Start the Clients](#start-the-clients)
+    - [Access the Federation](#access-the-federation)
+    - [Tutorial: Spleen Segmentation with Federated Learning](#tutorial-spleen-segmentation-with-federated-learning)
+  - [Final Considerations](#final-considerations)
+  - [What’s Next](#whats-next)
 
 ---
+
 ## Introduction to MAIA
 
 ### Why MAIA?
@@ -255,6 +274,11 @@ The MAIA Project page is structured in four main sections:
     <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Orthanc.png" alt="Orthanc DICOM Web" style="width:70%;" />
 </p>
 
+5. **NVFlare Dashboard**: An optional section that appears if the project has NVFlare enabled, providing a link to the NVFlare Dashboard for managing federated learning projects.
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/NVFlare-Dashboard.png" alt="NVFlare Dashboard" style="width:70%;" />
+</p>
+
 ---
 
 ### Connect VSCode to your running MAIA Workspace
@@ -281,7 +305,7 @@ You will need a DICOM dataset to upload into MAIA.
 - Since the dataset is provided in NIfTI format, you will need to convert it to DICOM. Follow the steps in [Kubeflow - Convert NIfTI to DICOM](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/Kubeflow.ipynb#Convert-NIFTI-to-DICOM).  
 
 For convenience, an example DICOM dataset with 5 abdominal CT scans (converted from the Task09-Spleen Decathlon dataset) is available here:  
-[MinIO - DICOM Spleen Dataset](https://aida-workshop.maia-small.cloud.cbh.kth.se/minio-console/api/v1/download-shared-object/aHR0cDovL21pbmlvLmFpZGEtd29ya3Nob3Auc3ZjLmNsdXN0ZXIubG9jYWwvc3BsZWVuL1NwbGVlbl9ESUNPTS56aXA_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1WT0Q3SVFIQkZZVVhSSUFGWlI1OCUyRjIwMjUwOTAxJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDkwMVQxMzI1NDZaJlgtQW16LUV4cGlyZXM9NDMxOTkmWC1BbXotU2VjdXJpdHktVG9rZW49ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmhZMk5sYzNOTFpYa2lPaUpXVDBRM1NWRklRa1paVlZoU1NVRkdXbEkxT0NJc0ltRmpjaUk2SWpFaUxDSmhkRjlvWVhOb0lqb2lTbXg2WWtSWlJXTTJXbXRUYnpaU1JEQm9OVjg1WnlJc0ltRjFaQ0k2SW0xaGFXRWlMQ0poZFhSb1gzUnBiV1VpT2pFM05UWTNNek13Tmpjc0ltRjZjQ0k2SW0xaGFXRWlMQ0psYldGcGJDSTZJbk5wYldKbGJrQnJkR2d1YzJVaUxDSmxiV0ZwYkY5MlpYSnBabWxsWkNJNmRISjFaU3dpWlhod0lqb3hOelUyTnpZNU1EWTJMQ0ptWVcxcGJIbGZibUZ0WlNJNklrSmxibVJoZW5wdmJHa2lMQ0puYVhabGJsOXVZVzFsSWpvaVUybHRiMjVsSWl3aVozSnZkWEJ6SWpvaVRVRkpRVHBoYVdSaExYZHZjbXR6YUc5d0lpd2lhV0YwSWpveE56VTJOek16TURZNExDSnBjM01pT2lKb2RIUndjem92TDJsaGJTNWpiRzkxWkM1alltZ3VhM1JvTG5ObEwzSmxZV3h0Y3k5amJHOTFaQ0lzSW1wMGFTSTZJamRpTkdVNVkyRm1MVE5oWlRndE5EUmlZeTFoWlRjNExUaGxNV0ZqTVdaaE1qWXlNeUlzSW01aGJXVWlPaUpUYVcxdmJtVWdRbVZ1WkdGNmVtOXNhU0lzSW5CeVpXWmxjbkpsWkY5MWMyVnlibUZ0WlNJNkluTnBiV0psYmtCcmRHZ3VjMlVpTENKemFXUWlPaUkzWlRKa1lqQmpZeTAzWkdZd0xUUXpaVE10T1RJeFlTMHpPREF4TTJZeE9UbGxZVEVpTENKemRXSWlPaUkzWTJFNE1EQXdPQzFpTldWbUxUUmhZak10WWpJMVppMWlaV1E0WkRSbVpUUmpabU1pTENKMGVYQWlPaUpKUkNKOS5OMW40US04eEsycmxxeXVSOERvWGF0ZGdqQ2R4QkVfLU9JLWxYbEM1ZFlNSWszSU1PRHRjMTBKUU5reTB6eHhHMnNhN1pweXZGUDVveTUxZVM3SlQwUSZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmdmVyc2lvbklkPW51bGwmWC1BbXotU2lnbmF0dXJlPThjMDM5MzE3MmNiYTY5ODg1YTFmYzY1MmY3MDMyZmNhNjZmOTAyYmY1Yzc2MDg5YmI0NTQ0N2JiZTFlYzhkODA)
+[MinIO - DICOM Spleen Dataset](https://aida-workshop.maia-small.cloud.cbh.kth.se/minio-console/api/v1/download-shared-object/aHR0cDovL21pbmlvLmFpZGEtd29ya3Nob3Auc3ZjLmNsdXN0ZXIubG9jYWwvc3BsZWVuL1NwbGVlbl9ESUNPTS56aXA_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD0xUjk1TklBNVlaMDJGQUQ4Nzk1TyUyRjIwMjUwOTE2JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDkxNlQxNDA5MDhaJlgtQW16LUV4cGlyZXM9NjA0Nzk5JlgtQW16LVNlY3VyaXR5LVRva2VuPWV5SmhiR2NpT2lKSVV6VXhNaUlzSW5SNWNDSTZJa3BYVkNKOS5leUpoWTJObGMzTkxaWGtpT2lJeFVqazFUa2xCTlZsYU1ESkdRVVE0TnprMVR5SXNJbUZqY2lJNklqRWlMQ0poZEY5b1lYTm9Jam9pTFU1TGRGRjVTVXhoTVZFNWEwMVpiRk55VW1kT1VTSXNJbUYxWkNJNkltMWhhV0VpTENKaGRYUm9YM1JwYldVaU9qRTNOVGd3TXpFM05ERXNJbUY2Y0NJNkltMWhhV0VpTENKbGJXRnBiQ0k2SW5OcGJXSmxia0JyZEdndWMyVWlMQ0psYldGcGJGOTJaWEpwWm1sbFpDSTZkSEoxWlN3aVpYaHdJam94TnpVNE5qTTJOVFF5TENKbVlXMXBiSGxmYm1GdFpTSTZJa0psYm1SaGVucHZiR2tpTENKbmFYWmxibDl1WVcxbElqb2lVMmx0YjI1bElpd2laM0p2ZFhCeklqb2lUVUZKUVRwaGFXUmhMWGR2Y210emFHOXdJaXdpYVdGMElqb3hOelU0TURNeE56UXlMQ0pwYzNNaU9pSm9kSFJ3Y3pvdkwybGhiUzVqYkc5MVpDNWpZbWd1YTNSb0xuTmxMM0psWVd4dGN5OWpiRzkxWkNJc0ltcDBhU0k2SWpGa056Rm1OVFF3TFRBMlpUVXRORGM0TWkxaVpUTXhMV1pqWWpka05tTXpPV05tWXlJc0ltNWhiV1VpT2lKVGFXMXZibVVnUW1WdVpHRjZlbTlzYVNJc0luQnlaV1psY25KbFpGOTFjMlZ5Ym1GdFpTSTZJbk5wYldKbGJrQnJkR2d1YzJVaUxDSnphV1FpT2lKalpHWmhNMlJtTmkwd01UbGxMVFJpWmpjdFltUTFOeTAzTTJSa1pEWmtZemcxWldZaUxDSnpkV0lpT2lJM1kyRTRNREF3T0MxaU5XVm1MVFJoWWpNdFlqSTFaaTFpWldRNFpEUm1aVFJqWm1NaUxDSjBlWEFpT2lKSlJDSjkuUVlCd2d0ZEFnNlRDTGpQMElqMTBFNGtVTXVnY3lyZTA3dWVYT3R6blg3ZjBCRmpnQkJ5YTQ1WlozZHgxeXppXzJsYVlucXpMbld6RTNKUGx1X2Z1NmcmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JnZlcnNpb25JZD1udWxsJlgtQW16LVNpZ25hdHVyZT0wOWE0N2RkZWY1NTk0ZmM5MGQzN2E5NDkyMDNlZmUyODNlNWViYjgzNWQ1ZTU5NjY5YjA4NjRiYmI5NTYxYWQ1)
 
 ---
 
@@ -337,6 +361,8 @@ After the successful execution of the Pipeline, you will find the NIFTI converte
 ### 1.3 Data Preparation and Preprocessing for Image Segmentation with nnUNet  
 
 In this tutorial, we will use the **Spleen Dataset** to build a model for automatic spleen segmentation in CT images. The process will rely on the **MONet Bundle**, which provides an end-to-end workflow for model development, training, and packaging for deployment. The MONet Bundle is specifically designed to integrate the state-of-the-art **nnUNet** framework—the benchmark for medical image segmentation—within the MONet ecosystem, enabling seamless support for deployment, active learning, and federated learning.
+
+Currently, the MONet Bundle is being developed with the aim of integrating within the MONAI ecosystem, with an ongoing effort to contribute it to the MONAI Bundle repository. Starting from version 1.5.0, MONAI is integrating the MONet Bundle basic functionalities, for more details, please refer to the [MONAI 1.5.0 Docs](https://docs.monai.io/en/stable/apps.html#nnunet-bundle)
 
 Using the MONet Bundle is highly convenient, as it allows researchers to implement a complete, automated pipeline for bringing advanced segmentation models into clinical workflows. To get started, only a configuration file is required, where details about the dataset, training parameters, and task specifications are defined.
 
@@ -525,9 +551,11 @@ You can execute jobs directly from the MAIA-HPC interface.
 To run the interface:
 
 ```bash
-export BOKEH_ALLOW_WS_ORIGIN=aida-workshop.maia-small.cloud.cbh.kth.se
+export BOKEH_ALLOW_WS_ORIGIN=kubeflow.maia-small.se
+export HPC_ID=pdc
 panel serve --dev HPC.ipynb --port 5006
 ```
+
 And then access it via:
 [MAIA-HPC](https://kubeflow.maia-small.se/notebook/aida-workshop/simben-40kth-2ese/proxy/5006/HPC)
 
@@ -724,7 +752,7 @@ This approach requires minimal setup: users only need to prepare a Python enviro
 
 **Requirements:**  
 - PyTorch ≥ 2.6.0 with CUDA support  
-- MONAI Bundle (`monai-bundle`)  
+- MONet Bundle (`monet-bundle`)  
 
 ```bash
 MONet_local_inference -i /home/maia-user/shared/Task09_Spleen/imagesTs/spleen_1.nii.gz -o /home/maia-user/shared/Task09_Spleen/predsTs --model /home/maia-user/shared/MONet_Bundle/Task09/MONetBundle/models/fold_0/model.ts --username NOUSER
@@ -783,6 +811,7 @@ tasks:
           meaning: "Spleen"
         algorithm_name: "MAIA_Segmentation-Spleen"
 ```
+
 ---
 
 ###### Building the Docker Image
@@ -791,6 +820,7 @@ We provide a KubeFlow pipeline for building the Docker image:
 [Docker-Build-Pipeline](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/KubeFlow/Pipelines/Docker_Build_pipeline.yaml)
 
 Parameters to specify:
+
 ```yaml
 "context": "docker/Spleen-HPC" # Path where to create the Docker context
 "destination": "maiacloud/aida-workshop-spleen:1.0"             # Docker image name and tag for the DICOM-based container
@@ -798,6 +828,7 @@ Parameters to specify:
 "segmentation_task_file": "Segmentation_Task.yaml"              # Path to the segmentation task file
 "model_file": "MONet_Bundle/Task09/MONetBundle/models/fold_0/model.ts" # Path to the TorchScript model file
 ```
+
 ⚠️ Note: To successfully push the Docker image to your registry, the KubeFlow pipeline requires a secret named maiacloud-dockerhub in the same namespace where the pipeline is executed.
 Instructions for creating the secret can be found here: [Instruction to Create a Docker Registry Secret](https://github.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/tree/main/Kubeflow.ipynb).
 
@@ -815,6 +846,7 @@ They are available here:
 ```bash
 MONet_inference_nifti --study_folder /path/to/input/folder --prediction_output_folder /path/to/output/folder --docker-image maiacloud/aida-workshop-spleen:1.0-nifti
 ```
+
 or for DICOM input:
 
 ```bash
@@ -826,11 +858,13 @@ MONet_inference_dicom --dicom_study_folder /path/to/input/folder --prediction_ou
 ```bash
 docker run --gpus all --shm-size 2g --rm -v /path/to/input/folder:/var/holoscan/input -v /path/to/output/folder:/var/holoscan/output maiacloud/aida-workshop-spleen:1.0-nifti
 ```
+
 or for DICOM input:
 
 ```bash
 docker run --gpus all --shm-size 2g --rm -v /path/to/input/folder:/var/holoscan/input -v /path/to/output/folder:/var/holoscan/output maiacloud/aida-workshop-spleen:1.0
 ```
+
 ---
 
 ###### Integration with the MAIA Platform:
@@ -845,17 +879,495 @@ Parameters to specify:
 "output_folder_path": "Task09_Spleen/SEG/spleen_1"
 "image": "maiacloud/aida-workshop-spleen:1.0"
 ```
+
 or for NIfTI input:
+
 ```yaml
 "input_folder_path": "Task09_Spleen/NIFTI/imagesTs/spleen_1"
 "output_folder_path": "Task09_Spleen/NIFTI/imagesTs/spleen_1"
 "image": "maiacloud/aida-workshop-spleen:1.0-nifti"
 ```
 
+---
+
+##### Option 3: MAIA Segmentation Portal  
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/MAIA_Segmentation_Portal-Remote.png" alt="MSP-Remote" style="width:50%;" />
+</p>
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/MAIA_Segmentation_Portal-Local.png" alt="MSP-Local" style="width:50%;" />
+</p>
+
+The solutions described so far require some technical expertise to set up and operate, along with access to local computing resources such as GPUs. They are primarily designed for researchers and data scientists familiar with command-line tools and Docker, and are best suited for one-off runs or batch processing. Each inference session involves preparing input data, launching the environment, loading the model and dependencies, and finally executing the inference—an overhead that must be repeated every time.  
+
+Alongside these approaches, which are well suited for technical users, we also offer a third option tailored for clinicians and radiologists. This option removes the need for technical knowledge or local hardware, providing an on-demand inference service that is always active and ready to process new images. All heavy computation runs on the MAIA platform, leaving users with only the task of sending images and saving the returned results.  
+
+The **MAIA Segmentation Portal** hosts a collection of pre-trained models served via **MONAI Label**. It supports both **NIfTI** and **DICOM** inputs, enabling users to upload medical images directly and receive segmentation outputs without local setup.  
+
+In the following section, we describe the different ways to interact with the MAIA Segmentation Portal.
+
+The strength of the **MAIA Segmentation Portal** lies in the fact that, once a model has been packaged as a **MONAI Bundle** (as described above), it can be easily deployed to the portal.  
+This makes the model immediately available for inference to other authorized users within the MAIA platform.  
+
+---
+
+###### Requirements  
+
+To prepare a pretrained model for deployment on the **MAIA Segmentation Portal**, the model must be packaged as a **MONet Bundle**.  
+Since the portal’s backend runs the inference service through MONAI Label, the interaction between the platform and the model is defined by the **MONet Bundle**.  
+
+In summary:  
+- Convert or prepare your pretrained model into a valid **MONet Bundle**.  
+- Ensure the bundle follows the MONAI Label specifications so it can be consumed by the portal.  
+- Once packaged, the model can be deployed to the MAIA Segmentation Portal for inference.  
+
+To prepare the **MONet Bundle** for the spleen segmentation model to be deployed on the portal: 
+
+```bash
+mkdir -p /home/maia-user/shared/MONAILabel/Spleen
+MONet_fetch_bundle --bundle_path Spleen
+
+rm -r /home/maia-user/shared/MONAILabel/Spleen/MONetBundle/configs/metadata.json
+rm -r /home/maia-user/shared/MONAILabel/Spleen/MONetBundle/configs/inference.yaml
+
+mkdir -p /home/maia-user/shared/MONAILabel/Spleen/MONetBundle/models/fold_0
+cp /home/maia-user/shared/MONet_Bundle/Task09/MONetBundle/models/fold_0/model.ts /home/maia-user/shared/MONAILabel/Spleen/MONetBundle/models/fold_0
+```
+
+---
+
+###### Deploying the Model to the MAIA Segmentation Portal
+To deploy the model to the MAIA Segmentation Portal, follow the instructions provided in the [MONAI-Label Notebook](https://github.com/SimoneBendazzoli93/MONAI-Label/blob/main/MONAI-Label.ipynb).
+
+Once deployed, the model becomes accessible for inference through both the portal’s **web interface** and **API** : [https://spleen-segmentation.aida-workshop.maia-small.cloud.cbh.kth.se/](https://spleen-segmentation.aida-workshop.maia-small.cloud.cbh.kth.se/).  
+In the following section, we describe the different ways users can interact with the MAIA Segmentation Portal to submit inference requests and obtain segmentation results.  
+
+---
+
+###### 3D Slicer Integration
+
+Since the MAIA Segmentation Portal is built on top of **MONAI Label**, it can be accessed directly from the **3D Slicer** application using the **MONAI Label extension**.
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Slicer.png" alt="MSP-Local" style="width:70%;" />
+</p>
+
+---
+
+###### MAIA Segmentation Portal
+
+The **MAIA Segmentation Portal** provides a user-friendly graphic interface for users. You can download it for [Windows](https://github.com/SimoneBendazzoli93/MONet-Bundle/releases/download/v1.3/MAIA_Segmentation_Portal.exe) or [Linux](https://github.com/SimoneBendazzoli93/MONet-Bundle/releases/download/v1.1.6/MAIA_Segmentation_Portal).
+More details about the portal can be found at: [MAIA Segmentation Portal Documentation](https://monet-bundle.readthedocs.io/en/latest/MAIA_Segmentation_Portal.html).
+
+The GUI allows users, upon authentication, to:
+- List and describe available models
+- Execute remote inference by uploading images and downloading segmentation results
+- Execute local inference by downloading the model and running it locally
+
+
+When executing remote inference on a **DICOM study**, the workflow is as follows:  
+
+1. The DICOM study is first uploaded to **Orthanc**.  
+2. The inference is performed on the **MAIA Segmentation Portal**.
+3. The resulting segmentation is downloaded locally as a **DICOM SEG**.
+4. A copy of the segmentation is also stored back in Orthanc as a **DICOM SEG**.
+
+
+This ensures that results can be directly visualized in the **OHIF Viewer**, while Orthanc maintains both the original DICOM study and its corresponding segmentation for easy access.  
+
+<div align="center" style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+  <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Login-MSP.png" alt="MSP-Login" style="width:30%;" />
+  <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Remote-MSP.png" alt="MSP-Remote" style="width:25%;" />
+</div>
+
+---
+
+###### Orthanc
+
+Another option is to directly upload **DICOM images** to **Orthanc**, which includes a mechanism to automatically trigger inference requests to the **MAIA Segmentation Portal** whenever a new DICOM series is received.  
+
+To enable automatic inference, the DICOM images must be uploaded with a specific tag in the `Image Comments` field.  
+- For example, to trigger the **spleen segmentation model**, use the tag: `Spleen-MSP`.
+
+Once the images are received, Orthanc sends them to the MAIA Segmentation Portal for inference. After processing, the resulting **DICOM SEG** is stored back in Orthanc, automatically linked to the original study.  
+
+This workflow is particularly useful for:  
+- Automating the inference process.  
+- Integrating segmentation into existing **clinical workflows**, where users only need to send DICOM images to Orthanc and then retrieve the results as DICOM SEG.  
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Workflow_Deploy.png" alt="Radiology AI Workspace" style="width:50%;" />
+</p>
+
+An example of this workflow can be found in the [MAIA-Segmentation-Portal.ipynb](./MAIA-Segmentation-Portal.ipynb) notebook.
+
+---
+
+###### MAIA-QR  
+
+Another alternative for submitting inference requests to the **MAIA Segmentation Portal** is through the **MAIA-QR** (Query-Retrieve) application.  
+
+This workflow mimics the behavior of a standard **PACS** system when interacting with the MAIA platform:  
+
+1. A **C-STORE** request is sent to Orthanc, containing the DICOM images to be processed.  
+2. As with the previous workflow, the `Image Comments` tag must include the model identifier to trigger the inference request.  
+3. A **Query-Retrieve (C-FIND/C-GET)** operation is then used to:  
+   - Monitor the status of the uploaded DICOM study.  
+   - Retrieve the resulting **DICOM SEG** from Orthanc once inference is complete.  
+
+This approach provides seamless integration with PACS-like workflows, allowing automated submission, monitoring, and retrieval of segmentation results.  
+
+The **MAIA-QR** script is available when installing the `monet-bundle` package:
+
+```bash
+pip install monet-bundle
+MAIA_QR --pacs-ip aida-workshop-orthanc-svc-orthanc --calling-ae-title Zocu4r8gPAimKpAR --called-ae-title ORTHANC --input-folder /home/maia-user/shared/Task09_Spleen/DICOM/spleen_1-MSP --output-folder /home/maia-user/shared/Task09_Spleen/SEG
+```
+
+---
+
+## Part 2: Active Learning with MONAI Label
+
+
+
+Active Learning is a machine learning strategy that improves training efficiency by selectively identifying the most informative data points for annotation. This is especially valuable in fields like medical imaging, where labeled data is costly or limited. By iteratively focusing on the most uncertain or representative samples, Active Learning enhances model performance while reducing the overall annotation effort.
+
+This approach follows a **human-in-the-loop** paradigm, where the model provides initial predictions and the user refines them, gradually improving segmentation results through repeated interaction.
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/Workflow_ActiveLearning.png" alt="Radiology AI Workspace" style="width:50%;" />
+</p>
+
+---
+
+### Active Learning Cycle
+
+1. **Initialize** – Start with a pretrained model (or train from scratch).  
+2. **Prediction** – The model generates outputs on new, unlabeled data.  
+3. **Annotation** – The user reviews and corrects these predictions, creating accurate annotations.  
+4. **Integration** – The corrected annotations are stored (e.g., as DICOM SEG in Orthanc) and added to the training dataset.  
+5. **Retraining** – The model is retrained with the expanded dataset, improving accuracy.  
+6. **Iteration** – The cycle repeats on additional unlabeled data.
+
+---
+
+### Active Learning with 3D Slicer and MONAI Label
+
+We use **3D Slicer** with the **MONAI Label extension** to interactively refine model predictions.  
+
+By connecting 3D Slicer to the **Spleen segmentation model** deployed on the **MAIA Segmentation Portal**, we can leverage a pretrained model to generate initial predictions on new CT scans. The user then reviews and corrects these predictions directly within 3D Slicer, producing high-quality annotations that can be fed back into the training process to further improve the model.
+
+Different model versions can be deployed and served through the **MAIA Segmentation Portal**. Since both **Model Deployment** and **Active Learning** are managed within the same **MONet Bundle** mechanism, the two workflows are directly integrated.
+
+---
+
+### Starting the Active Learning Loop
+
+**Note:** minimum 5 pairs of images/labels are needed by nnUNet to start the training process (one per fold in the standard 5-fold cross-validation setup).
+In the interface, we select the **train** section (use **infer** for prediction-only mode), and configure the loop with the following parameters:
+
+```yaml
+pretrained: True
+max_epochs: 2
+val_split: -1
+multi_gpu: False
+gpus: all
+tracking: None
+tracking_uri: https://aida-workshop.maia-small.cloud.cbh.kth.se/mlflow
+tracking_experiment_name: Spleen-ActiveLearning
+run_id: ""
+model_filename: model.ts
+skip_preprocess: False
+Label_0: background
+dataset_name_or_id: 009
+fold_id: 0
+iterations: 50
+mlflow_run_name: ActiveLearning-Iteration-1
+modality_list: CT
+nnunet_configuration: 3d_fullres
+nnunet_plans_identifier: nnUNetPlans
+nnunet_trainer_class_name: nnUNetTrainer
+num_classes: 2
+region_class_order: ""
+Label_1: Spleen
+```
+
+Optionally disable the preprocessing step if the data is already preprocessed (only required in the first iteration):
+```yaml
+skip_preprocess: True
+```
+
+---
+
+### Training from Scratch
+
+In case a pretrained model is not available, you can start the active learning loop by training the model from scratch.
+
+To do this, set the `pretrained` flag to `False` in the configuration file:
+
+```yaml
+pretrained: False
+```
+
+---
+
+## Part 3: Federated Learning with NVFlare
+
+### Introduction to Federated Learning
+
+Federated Learning (FL) is a decentralized machine learning approach that enables multiple clients to collaboratively train a shared model while keeping their data localized. This method enhances data privacy and security, as sensitive information remains on the clients' devices, and only model updates are exchanged with a central server. FL is particularly beneficial in scenarios where data sharing is restricted due to privacy concerns or regulatory requirements.
+
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/img/NVFlare.png" alt="NVFlare" style="width:50%;" />
+</p>
+
+---
+
+### NVFlare Overview
+
+NVFlare is an open-source framework developed by NVIDIA for building and deploying federated learning applications. It provides a robust infrastructure for managing communication between the central server and multiple clients, handling model aggregation, and ensuring secure data transmission. NVFlare supports various machine learning frameworks, making it a versatile choice for implementing federated learning solutions.
+
+Crucially, NVFlare is integrated within the MONAI ecosystem, enabling direct use of MONAI Bundles (and by extension, MONet Bundles) for federated learning tasks. This integration streamlines the deployment of medical imaging models in federated learning environments.
+For example, a model can first be trained across distributed clients using FL, and the resulting model can then be packaged as a MONet Bundle for active learning or deployment, as outlined in Part 1 of this tutorial.
+
+A practical demonstration of this approach—applied to PET-CT lymphoma segmentation and multimodal MRI brain tumor segmentation in the **BraTS challenge**—will be presented at **MICCAI 2025** in the **DeCaF (Distributed, Collaborative, and Federated Learning) workshop**. It will also be featured in the **BraTS challenge GoAT subtask** on generalization across tumors, underscoring the important role of federated learning in enhancing model generalization across diverse subtasks.
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/SimoneBendazzoli93/MONet-Bundle/main/images/Workflow.png" alt="NVFlare" style="width:70%;" />
+</p>
+
+---
+
+### Brain Tumor Segmentation with Federated Learning for Enhanced Generalizability
+
+| **Dataset - Label**      | **Experiment**       | **DSC**         | **ASD \[mm]**  |
+| ------------------------ | -------------------- | --------------- | -------------- |
+| BraTS-GLI (n=251) - ET   | Cross-Site BraTS-MEN | 0.695 ± 0.292   | 3.05 ± 8.69    |
+|                          | Cross-Site BraTS-MET | 0.729 ± 0.271   | 1.62 ± 4.97    |
+|                          | *MONet-FL*           | *0.788 ± 0.261* | *1.57 ± 5.56*  |
+|                          | BraTSFusion          | 0.774 ± 0.271   | 1.61 ± 4.07    |
+|                          | nnU-Net-Baseline     | 0.796 ± 0.254   | 1.38 ± 3.72    |
+| BraTS-GLI (n=251) - NETC | Cross-Site BraTS-MEN | 0.709 ± 0.296   | 2.17 ± 7.84    |
+|                          | Cross-Site BraTS-MET | 0.787 ± 0.218   | 1.47 ± 2.92    |
+|                          | *MONet-FL*           | *0.836 ± 0.178* | *0.88 ± 1.83*  |
+|                          | BraTSFusion          | 0.846 ± 0.153   | 0.84 ± 1.40    |
+|                          | nnU-Net-Baseline     | 0.871 ± 0.143   | 0.81 ± 1.73    |
+| BraTS-GLI (n=251) - SNFH | Cross-Site BraTS-MEN | 0.823 ± 0.197   | 2.52 ± 8.67    |
+|                          | Cross-Site BraTS-MET | 0.833 ± 0.167   | 1.29 ± 3.35    |
+|                          | *MONet-FL*           | *0.884 ± 0.126* | *0.79 ± 2.21*  |
+|                          | BraTSFusion          | 0.897 ± 0.118   | 1.92 ± 0.08    |
+|                          | nnU-Net-Baseline     | 0.896 ± 0.116   | 0.48 ± 1.38    |
+| BraTS-MEN (n=200) - ET   | Cross-Site BraTS-GLI | 0.368 ± 0.352   | 8.92 ± 7.78    |
+|                          | Cross-Site BraTS-MET | 0.366 ± 0.338   | 8.85 ± 12.57   |
+|                          | *MONet-FL*           | *0.422 ± 0.354* | *7.14 ± 7.38*  |
+|                          | BraTSFusion          | 0.304 ± 0.308   | 8.45 ± 8.67    |
+|                          | nnU-Net-Baseline     | 0.367 ± 0.337   | 9.52 ± 8.49    |
+| BraTS-MEN (n=200) - NETC | Cross-Site BraTS-GLI | 0.716 ± 0.305   | 6.41 ± 12.83   |
+|                          | Cross-Site BraTS-MET | 0.714 ± 0.299   | 4.58 ± 7.08    |
+|                          | *MONet-FL*           | *0.774 ± 0.273* | *3.25 ± 5.95*  |
+|                          | BraTSFusion          | 0.728 ± 0.349   | 3.97 ± 8.76    |
+|                          | nnU-Net-Baseline     | 0.774 ± 0.312   | 1.87 ± 3.28    |
+| BraTS-MEN (n=200) - SNFH | Cross-Site BraTS-GLI | 0.763 ± 0.363   | 2.18 ± 10.75   |
+|                          | Cross-Site BraTS-MET | 0.745 ± 0.345   | 3.47 ± 13.43   |
+|                          | *MONet-FL*           | *0.911 ± 0.184* | *2.29 ± 12.21* |
+|                          | BraTSFusion          | 0.925 ± 0.140   | 2.05 ± 10.11   |
+|                          | nnU-Net-Baseline     | 0.924 ± 0.168   | 2.35 ± 10.16   |
+| BraTS-MET (n=48) - ET    | Cross-Site BraTS-GLI | 0.560 ± 0.335   | 5.97 ± 12.76   |
+|                          | Cross-Site BraTS-MEN | 0.358 ± 0.362   | 11.55 ± 23.56  |
+|                          | *MONet-FL*           | *0.634 ± 0.303* | *3.47 ± 8.86*  |
+|                          | BraTSFusion          | 0.506 ± 0.313   | 6.79 ± 18.47   |
+|                          | nnU-Net-Baseline     | 0.677 ± 0.281   | 3.14 ± 8.02    |
+| BraTS-MET (n=48) - NETC  | Cross-Site BraTS-GLI | 0.658 ± 0.314   | 3.68 ± 10.01   |
+|                          | Cross-Site BraTS-MEN | 0.547 ± 0.376   | 8.59 ± 19.90   |
+|                          | *MONet-FL*           | *0.719 ± 0.262* | *1.48 ± 1.92*  |
+|                          | BraTSFusion          | 0.698 ± 0.256   | 1.42 ± 1.27    |
+|                          | nnU-Net-Baseline     | 0.727 ± 0.251   | 2.19 ± 5.06    |
+| BraTS-MET (n=48) - SNFH  | Cross-Site BraTS-GLI | 0.613 ± 0.299   | 0.62 ± 0.36    |
+|                          | Cross-Site BraTS-MEN | 0.541 ± 0.338   | 13.51 ± 25.83  |
+|                          | *MONet-FL*           | *0.763 ± 0.156* | *0.60 ± 0.66*  |
+|                          | BraTSFusion          | 0.717 ± 0.194   | 2.78 ± 11.49   |
+|                          | nnU-Net-Baseline     | 0.791 ± 0.147   | 0.53 ± 0.44    |
+
+---
+
+### Lymphoma Segmentation with Federated Learning for Enhanced Generalizability
+
+| **Dataset - Label**        | **Experiment**       | **DSC**            | **ASD [mm]**         |
+|---------------------------|----------------------|--------------------|----------------------|
+| **AutoPET (n=27) - Lesion** | Cross-Site IL1        | 0.445 ± 0.270       | 50.19 ± 95.19        |
+|                           | Cross-Site IL2        | 0.587 ± 0.251       | 40.06 ± 89.72        |
+|                           | *MONet-FL*            | *0.694 ± 0.279*     | *10.80 ± 24.61*      |
+|                           | LymphoFusion          | 0.756 ± 0.244       | 19.27 ± 39.78        |
+|                           | nnU-Net-Baseline      | 0.758 ± 0.252       | 38.50 ± 133.01       |
+| **IL1 (n=16) - Lesion**     | Cross-Site AutoPET    | 0.317 ± 0.255       | 99.46 ± 147.08       |
+|                           | Cross-Site IL2        | 0.297 ± 0.230       | 111.11 ± 172.99      |
+|                           | *MONet-FL*            | *0.453 ± 0.252*     | *70.91 ± 127.18*     |
+|                           | LymphoFusion          | 0.421 ± 0.223       | 90.29 ± 143.43       |
+|                           | nnU-Net-Baseline      | 0.512 ± 0.215       | 12.95 ± 11.69        |
+| **IL2 (n=31) - Lesion**     | Cross-Site AutoPET    | 0.534 ± 0.265       | 39.34 ± 71.36        |
+|                           | Cross-Site IL1        | 0.391 ± 0.247       | 40.03 ± 79.63        |
+|                           | *MONet-FL*            | *0.610 ± 0.234*     | *25.03 ± 64.44*      |
+|                           | LymphoFusion          | 0.665 ± 0.242       | 23.07 ± 70.48        |
+|                           | nnU-Net-Baseline      | 0.671 ± 0.275       | 24.09 ± 72.41        |
+
+---
+
+### Setting Up NVFlare with MAIA
+ 
+Within the MAIA workspace, it is possible to pre install a (**NVFlare Dashboard**)[https://nvflare.aida-workshop.maia-small.cloud.cbh.kth.se/] to be able to provision a NVFlare server and multiple clients, and start a federated learning experiment using MONet Bundles.
+Users can register to the NVFlare and get access to the their **Startup Kits**, which are used to get access to the NVFlare federation.
+Additionally, authorized users can register new clients to the federation, and get access to their **Startup Kits** to join the federation from the clients.
+
+---
+
+### Start the Server
+
+To start the server, you first need to download the server startup kit from the NVFlare dashboard, and then start the server on your MAIA workspace:
+
+```bash
+helm install maia-server workspace/demo/prod_00/nvflare-chart
+```
+
+
+Remeber to unzip the startup kit with the password given in the NVFlare dashboard and upload it throguh SFTP to:
+
+```bash
+ssh admin@maia-sftp
+cd /home/nvflare
+put -r <STARTUP_KIT>
+```
+
+---
+
+### Start the Clients
+
+To start a client, you first need to download the client startup kit from the NVFlare dashboard, and then start the client on your MAIA workspace:
+
+```bash
+helm install maia-client-1 workspace/demo/prod_00/nvflare-chart/templates/maia-client-1
+```
+
+Remeber to unzip the startup kit with the password given in the NVFlare dashboard and upload it throguh SFTP to:
+
+```bash
+ssh admin@maia-client-1-sftp
+cd /home/nvflare
+put -r <STARTUP_KIT>
+```
+
+#### Start Clients on HPC Clusters
+
+Trough the MAIA-HPC module, explained in, the clients can also be hosted on HPC clusters, to leverage more powerful computing resources.
+
+We provide an example of an experiment configuration file to start a NVFlare client on one of the HPC clusters available in MAIA.
+
+The only other requirement is to have the maiacloud/nvflare:1.3 image available as a Singularity container on the HPC cluster, under the project folder:
+
+```bash
+cd <PROJECT_FOLDER>
+singularity pull docker://maiacloud/nvflare:1.3
+```
+
+---
+
+### Access the Federation
+
+Once the Federation, formed by the server and multiple clients, is up and running, you can access the NVFlare dashboard to monitor the status of the federation, start new experiments, and monitor the status of the experiments:
+
+```bash
+<USERNAME>/startup/fl_admin.sh
+```
+
+---
+
+### Tutorial: Spleen Segmentation with Federated Learning
+
+In this tutorial, we demonstrate how to set up and run a **federated learning experiment for spleen segmentation** using [NVFlare](https://nvflare.readthedocs.io/en/main/) and **MONet Bundles**.  
+
+You can follow along using the provided notebook:  
+👉 [MONet-FL.ipynb](https://raw.githubusercontent.com/SimoneBendazzoli93/MAIA-AIDA-TechDays-Workshop/main/MONet-FL.ipynb)
+
+
+
+---
+
+#### Workflow Overview
+
+The tutorial covers the following steps:
+
+##### 1. Dataset Preparation
+Each participating site prepares its local dataset. Data is harmonized and organized according to the **nnUNet directory structure**, including training, validation, and test splits.
+
+##### 2. Experiment Planning (Main Site)
+One site is designated as the *main site*. This site runs the **nnUNet experiment planning** step, which generates preprocessing and training configurations.  
+These plans are then shared with all other sites to ensure consistency across the federation.
+
+##### 3. Preprocessing (All Sites)
+Using the shared nnUNet plans, each site preprocesses its own local data. This ensures that feature extraction, resampling, and normalization are aligned across the federation.
+
+##### 4. Federated Training
+The training phase runs locally at each site using **nnUNet**.  
+Instead of sending raw data, each site sends model updates (gradients/weights) to the FL server, which securely aggregates them into a **global model**.
+
+##### 5. Cross-Site Evaluation
+Once training is complete, the global model is evaluated across all sites.  
+Each site runs inference on its local test set, and results are collected to assess performance consistency and generalization.
+
+##### 6. Model Packaging
+The trained global model is packaged as a **MONet Bundle**.  
+This makes the model portable, reproducible, and ready for deployment in downstream workflows such as:
+
+- Active learning  
+- External validation  
+- Clinical inference pipelines  
+
+---
+
+## Final Considerations
+
+The **MAIA platform** demonstrates how medical AI research can be supported through a flexible and accessible infrastructure. Key takeaways include:
+
+- **End-to-End Workflow**  
+  From data ingestion and preprocessing to model training, evaluation, and deployment, the full AI development cycle is streamlined in a single platform.
+
+- **Expert-in-the-Loop Interaction**  
+  Clinicians and researchers can iteratively refine models, ensuring that AI outputs remain clinically relevant and trustworthy.
+
+- **Federated Learning Configuration**  
+  Enables collaborative research across multiple sites while preserving patient data privacy, promoting secure and ethical data sharing.
+
+- **Accessible Infrastructure**  
+  Unlike traditional high-maintenance data centers, MAIA runs efficiently on **regular office workstations** equipped with **gaming-level GPUs**.  
+  This drastically lowers entry barriers for institutions without large-scale compute resources.
+
+---
+
+✨ **Best Highlight**: MAIA makes it possible to build a **democratized, open, and accessible AI infrastructure** for medical imaging research—empowering institutions of all sizes to participate in advancing medical AI.
+
+---
+
+## What’s Next
+
+Looking ahead, **MAIA aims to further expand within the Swedish arena**, strengthening its role as a collaborative hub for medical AI research.  
+
+The platform’s development will continue to focus on:
+
+- **Continuous Improvement** of tools, workflows, and infrastructure.  
+- **Support for Research Groups and Clinical Partners**, ensuring that MAIA provides practical solutions for a wide range of applications.  
+- **Broader Collaboration and Involvement**, welcoming new partners to contribute to the **growth and expansion** of the platform.  
+
+By building on its foundations, MAIA seeks to become a cornerstone for **collaborative, privacy-preserving, and impactful medical AI research** in Sweden and beyond.
+
         </textarea>
       </section>
     </div>
   </div>
+  <div class="footer">
+  &copy; 2025 Simone Bendazzoli, MAIA. All rights reserved.
+</div>
 
   <!-- Reveal.js -->
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js"></script>
@@ -899,6 +1411,15 @@ document.addEventListener("DOMContentLoaded", () => {
   color: #fff;
   border: none;
   border-radius: 3px;
+}
+.footer {
+  position: fixed;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.8em;
+  color: #666;
+  pointer-events: none; /* so it doesn't interfere with slide clicks */
 }
 .copy-btn:hover {
   background: #666;
