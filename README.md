@@ -1230,7 +1230,7 @@ put -r <STARTUP_KIT>
 
 #### Start Clients on HPC Clusters
 
-Trough the MAIA-HPC module, explained in, the clients can also be hosted on HPC clusters, to leverage more powerful computing resources.
+Through the MAIA-HPC module, explained in [HPC Integration](#15-model-training-and-validation-with-nnunet-hpc), the clients can also be hosted on HPC clusters, to leverage more powerful computing resources.
 
 We provide an example of an experiment configuration file to start a NVFlare client on one of the HPC clusters available in MAIA.
 
